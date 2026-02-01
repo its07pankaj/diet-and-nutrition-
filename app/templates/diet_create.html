@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Nutrition Protocol - DietNotify</title>
+    <link rel="icon" type="image/svg+xml" href="/static/img/logo.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        :root {
+            /* Light Theme Overrides */
+            --accent-primary: #0891b2;
+            /* Green */
+            --accent-secondary: #0ea5e9;
+            /* Sky Blue */
+            --accent-tertiary: #facc15;
+            /* Yellow */
+
+            --gradient-main: linear-gradient(135deg, #0891b2 0%, #0ea5e9 50%, #facc15 100%);
+            --gradient-button: linear-gradient(135deg, #0891b2 0%, #22d3ee 100%);
+
+            --bg-primary: #ffffff;
+            --bg-secondary: #f4f4f5;
+            --bg-card: #ffffff;
+            --text-primary: #09090b;
+            --text-secondary: #52525b;
+            --text-muted: #a1a1aa;
+
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: #e4e4e7;
+            --nav-height: 80px;
+            --error: #dc2626;
+            --warning: #facc15;
+
+            --error: #ef4444;
+            /* Standard Red */
+            --success: #0891b2;
+            --brand-diet: #0891b2;
+            --brand-notify: #84cc16;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .bg-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.88)),
+                url('/static/img/scientific_bg.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .mesh-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.3;
+            animation: meshFloat 25s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
+            top: -150px;
+            right: -100px;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 70%);
+            bottom: -150px;
+            left: -100px;
+            animation-delay: -10s;
+        }
+
+        @keyframes meshFloat {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(50px, 30px) scale(1.1);
+            }
+        }
+
+        /* SIDEBAR (Match Dashboard) */
+        .sidebar {
+            width: 280px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1300;
+            /* Increased z-index to be above mobile-header and bottom-nav */
+            display: flex;
+            flex-direction: column;
+            padding: 25px 15px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding: 10px;
+            text-decoration: none;
+        }
+
+        .sidebar-brand span {
+            font-weight: 800;
+            font-size: 1.4rem;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            margin-bottom: 8px;
+            border-radius: 14px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(22, 163, 74, 0.05);
+            color: var(--text-primary);
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: var(--gradient-main);
+            color: #000;
+            font-weight: 700;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+                padding: 15px 10px;
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            .sidebar-brand span,
+            .nav-link span:not(.nav-icon) {
+                display: none;
+            }
+
+            /* Restore visibility on hover for tablets as requested */
+            .sidebar:hover {
+                width: 280px;
+                padding: 25px 15px;
+            }
+
+            .sidebar:hover .sidebar-brand span,
+            .sidebar:hover .nav-link span:not(.nav-icon) {
+                display: inline;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 14px;
+            }
+
+            .sidebar:hover .nav-link {
+                justify-content: flex-start;
+                padding: 16px 20px;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                visibility: hidden;
+                box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+                visibility: visible;
+                display: flex !important;
+                width: 280px !important;
+                /* Force width on mobile when active */
+                z-index: 1500;
+            }
+
+            .sidebar.active .sidebar-brand span,
+            .sidebar.active .nav-link span:not(.nav-icon) {
+                display: inline !important;
+            }
+
+            .sidebar.active .nav-link {
+                justify-content: flex-start !important;
+                padding: 16px 20px !important;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(4px);
+                z-index: 1450;
+                display: none;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            .mobile-header {
+                display: flex !important;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 60px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(25px);
+                z-index: 1100;
+                align-items: center;
+                justify-content: space-between;
+                /* Space out items */
+                padding: 0 15px;
+                border-bottom: 1px solid var(--glass-border);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            }
+
+            .hamburger-menu {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 44px;
+                height: 44px;
+                cursor: pointer;
+                z-index: 1200;
+                margin-right: 10px;
+                background: rgba(22, 163, 74, 0.1);
+                border-radius: 12px;
+                color: var(--accent-primary);
+                font-size: 1.2rem;
+                transition: all 0.3s ease;
+            }
+
+            .hamburger-menu.active {
+                transform: rotate(180deg);
+                background: var(--accent-primary);
+                color: white;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-top: 100px;
+                /* Increased for header clearance */
+                margin-bottom: 70px;
+                /* Space for bottom nav */
+                height: calc(100vh - 170px);
+            }
+
+            /* BOTTOM NAVIGATION */
+            .bottom-nav {
+                display: flex !important;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 70px;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                border-top: 1px solid var(--glass-border);
+                z-index: 1200;
+                justify-content: space-around;
+                align-items: center;
+                padding: 0 10px;
+                box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.05);
+            }
+
+            .bottom-nav-link {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                color: var(--text-secondary);
+                text-decoration: none;
+                font-size: 0.7rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                transition: all 0.3s ease;
+                flex: 1;
+            }
+
+            .bottom-nav-link i {
+                font-size: 1.2rem;
+            }
+
+            .bottom-nav-link.active {
+                color: var(--accent-primary);
+            }
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--glass-bg);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .page-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: stretch;
+            justify-content: flex-start;
+            padding: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container-form {
+            max-width: none;
+            width: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.9)),
+                url('/static/img/backgrounds/lab_bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 40px 60px 100px;
+            /* Added bottom padding */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Inner Wrapper to prevent "breaking" layout on large screens */
+        .form-content-wrapper {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        h1.page-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2.8rem;
+            font-weight: 900;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 35px;
+            line-height: 1.7;
+        }
+
+        .page-subtitle strong {
+            color: var(--accent-primary);
+        }
+
+        /* Profile Summary Card */
+        .profile-summary {
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.85)),
+                url('/static/img/backgrounds/profile_bg.png');
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            border-left: 6px solid var(--accent-primary);
+        }
+
+        .profile-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(10px);
+            z-index: 0;
+        }
+
+        .profile-summary>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .profile-header h3 {
+            color: var(--accent-primary);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .edit-profile-btn {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .edit-profile-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .profile-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+        }
+
+        .profile-stat .value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-stat .label {
+            font-size: 0.85rem;
+            /* Slightly larger */
+            color: var(--text-primary);
+            /* Dark text for readability */
+            font-weight: 600;
+            margin-top: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            /* Subtle bg for label */
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Login Required Card */
+        .login-required,
+        .profile-required {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-required {
+            background: rgba(255, 217, 61, 0.1);
+            border-color: rgba(255, 217, 61, 0.3);
+        }
+
+        .login-required i,
+        .profile-required i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .login-required i {
+            color: var(--error);
+        }
+
+        .profile-required i {
+            color: var(--warning);
+        }
+
+        .login-required h3,
+        .profile-required h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .login-required p,
+        .profile-required p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: var(--gradient-button);
+            color: #000;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Duration Options */
+        .duration-section {
+            margin-bottom: 25px;
+        }
+
+        .duration-section label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .duration-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            /* Allow wrapping on small screens */
+        }
+
+        .duration-option {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .duration-option input {
+            display: none;
+        }
+
+        .duration-label {
+            display: block;
+            padding: 18px;
+            text-align: center;
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .duration-option input:checked+.duration-label {
+            border-color: var(--accent-primary);
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .duration-label:hover {
+            border-color: rgba(0, 255, 136, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 20px;
+            background: var(--gradient-button);
+            color: #000;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .science-note {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Saved Plans Section */
+        .saved-plans-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.88)),
+                url('/static/img/backgrounds/saved_plans_bg.png');
+            background-size: cover;
+            background-position: center;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .saved-plans-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .saved-plans-header h3 {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .plan-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .plan-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .plan-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(5px);
+        }
+
+        .plan-item.active {
+            border-color: var(--accent-primary);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .plan-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .plan-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-main);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+        }
+
+        .plan-details h4 {
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+
+        .plan-details span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .active-badge {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--accent-primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .no-plans {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .loading-screen.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .loader-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 40px;
+        }
+
+        .loader-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-radius: 50%;
+            animation: loaderSpin 1.5s linear infinite;
+        }
+
+        .loader-ring:nth-child(1) {
+            border-top-color: var(--accent-primary);
+        }
+
+        .loader-ring:nth-child(2) {
+            width: 85%;
+            height: 85%;
+            top: 7.5%;
+            left: 7.5%;
+            border-right-color: var(--accent-secondary);
+            animation-direction: reverse;
+        }
+
+        .loader-ring:nth-child(3) {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            border-bottom-color: var(--accent-tertiary);
+        }
+
+        @keyframes loaderSpin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: var(--accent-primary);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+        }
+
+        .loading-screen h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .loading-screen p {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .token-info {
+            color: var(--accent-secondary);
+            font-weight: 600;
+        }
+
+        .footer {
+            padding: 30px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .navbar .container {
+                padding: 0 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .container-form {
+                padding: 35px 25px;
+            }
+
+            h1.page-title {
+                font-size: 2rem;
+            }
+
+            .duration-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .profile-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-mesh"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+
+    <!-- MOBILE HEADER -->
+    <header class="mobile-header" style="display: none;">
+        <div class="hamburger-menu" id="hamburgerMenu" onclick="toggleMobileSidebar()">
+            <i class="fas fa-chevron-right"></i>
+        </div>
+        <a href="/index.html" class="brand-wrapper"
+            style="margin-right: auto; margin-left: 15px; text-decoration: none; display: flex; align-items: center; gap: 10px;">
+            <div class="brand-icon" style="height: 32px; width: 32px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="logo-gradient-dash-mob-create" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:var(--brand-diet)" />
+                            <stop offset="100%" style="stop-color:var(--brand-yellow)" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#logo-gradient-dash-mob-create)"
+                        d="M50 15C30 15 15 35 15 55C15 75 35 85 50 85C65 85 85 75 85 55C85 35 70 15 50 15ZM50 78C35 78 25 68 25 55C25 42 35 32 50 25C65 32 75 42 75 55C75 68 65 78 50 78Z" />
+                    <path fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+                        d="M25 55H40L45 40L55 70L60 55H75" />
+                </svg>
+            </div>
+            <div class="brand-text" style="font-size: 1.1rem; letter-spacing: -0.5px; font-weight: 800;">
+                <span class="text-diet" style="color: var(--brand-diet);">Diet</span><span class="text-notify"
+                    style="color: var(--brand-notify);">Notify</span>
+            </div>
+        </a>
+        <div id="headerSectionTitle"
+            style="font-size: 0.8rem; font-weight: 800; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 1px;">
+            Planner
+        </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a href="/index.html" class="brand-wrapper sidebar-brand" style="margin-bottom: 40px; padding: 0 20px;">
+            <div class="brand-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="logo-gradient-create-side" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:var(--brand-diet)" />
+                            <stop offset="100%" style="stop-color:var(--brand-yellow)" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#logo-gradient-create-side)"
+                        d="M50 15C30 15 15 35 15 55C15 75 35 85 50 85C65 85 85 75 85 55C85 35 70 15 50 15ZM50 78C35 78 25 68 25 55C25 42 35 32 50 25C65 32 75 42 75 55C75 68 65 78 50 78Z" />
+                    <path fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+                        d="M25 55H40L45 40L55 70L60 55H75" />
+                </svg>
+            </div>
+            <div class="brand-text">
+                <span class="text-diet">Diet</span><span class="text-notify">Notify</span>
+            </div>
+        </a>
+
+        <ul class="nav-menu">
+            <li><a class="nav-link" href="/index.html">
+                    <span class="nav-icon"><i class="fas fa-home"></i></span>
+                    <span>Home</span>
+                </a></li>
+            <li><a class="nav-link" href="/nutrition.html">
+                    <span class="nav-icon"><i class="fas fa-leaf"></i></span>
+                    <span>Nutrition Engine</span>
+                </a></li>
+            <li><a class="nav-link" href="/diet/dashboard">
+                    <span class="nav-icon"><i class="fas fa-chart-pie"></i></span>
+                    <span>Dashboard</span>
+                </a></li>
+            <li><a class="nav-link active" href="/diet/create">
+                    <span class="nav-icon"><i class="fas fa-plus"></i></span>
+                    <span>Create New Plan</span>
+                </a></li>
+            <li><a class="nav-link" href="/profile_setup.html">
+                    <span class="nav-icon"><i class="fas fa-user-edit"></i></span>
+                    <span>Update Profile</span>
+                </a></li>
+            <li><a class="nav-link" onclick="logout()"
+                    style="color: var(--accent-red); opacity: 0.8; margin-top: auto;">
+                    <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
+                    <span>Logout</span>
+                </a></li>
+        </ul>
+    </aside>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="bottom-nav" style="display: none;">
+        <a href="/index.html" class="bottom-nav-link">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="/diet/dashboard" class="bottom-nav-link">
+            <i class="fas fa-chart-pie"></i>
+            <span>Dash</span>
+        </a>
+        <a href="/diet/create" class="bottom-nav-link active">
+            <i class="fas fa-plus-circle"></i>
+            <span>Create</span>
+        </a>
+        <a href="/profile_setup.html" class="bottom-nav-link">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <main class="main-content custom-scrollbar">
+        <script src="/static/js/navbar.js"></script>
+        <script src="/static/js/strict_auth.js"></script>
+
+        <div class="page-container">
+            <div class="container-form">
+                <div class="form-content-wrapper animate-card">
+                    <div class="header-standard animate-card" style="animation-delay: 0.1s;">
+                        <div class="brand-icon" style="height: 60px; width: 60px; margin: 0 auto 20px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                                <defs>
+                                    <linearGradient id="logo-gradient-create-hero" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:var(--brand-diet)" />
+                                        <stop offset="100%" style="stop-color:var(--brand-yellow)" />
+                                    </linearGradient>
+                                </defs>
+                                <path fill="url(#logo-gradient-create-hero)"
+                                    d="M50 15C30 15 15 35 15 55C15 75 35 85 50 85C65 85 85 75 85 55C85 35 70 15 50 15ZM50 78C35 78 25 68 25 55C25 42 35 32 50 25C65 32 75 42 75 55C75 68 65 78 50 78Z" />
+                                <path fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"
+                                    stroke-linejoin="round" d="M25 55H40L45 40L55 70L60 55H75" />
+                            </svg>
+                        </div>
+                        <h1 class="hero-title" style="font-size: clamp(2.2rem, 5vw, 3.5rem); margin-bottom: 15px;">
+                            Computational<br>
+                            Nutritional <span class="gradient-text"
+                                style="background: var(--gradient-brand); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Protocol</span>
+                        </h1>
+                        <p class="page-subtitle"
+                            style="font-size: 1.15rem; color: var(--text-secondary); max-width: 700px; margin: 0 auto 30px;">
+                            Powered by <strong>Advanced Bio-Metric Algorithms</strong> to analyze your physiology with
+                            scientific
+                            precision.</p>
+                    </div>
+
+                    <!-- Login Required State -->
+                    <div class="login-required" id="loginRequired" style="display: none;">
+                        <i class="fas fa-lock"></i>
+                        <h3>Login Required</h3>
+                        <p>Please login or create an account to generate your personalized diet plan.</p>
+                        <a href="/login" class="btn-action">
+                            <i class="fas fa-sign-in-alt"></i> Login / Sign Up
+                        </a>
+                    </div>
+
+                    <!-- Profile Required State -->
+                    <div class="profile-required" id="profileRequired" style="display: none;">
+                        <i class="fas fa-user-edit"></i>
+                        <h3>Complete Your Profile</h3>
+                        <p>We need your bio-metrics to generate a personalized diet plan. It only takes 2 minutes!</p>
+                        <a href="/profile_setup.html" class="btn-action">
+                            <i class="fas fa-clipboard-list"></i> Complete Profile
+                        </a>
+                    </div>
+
+                    <!-- Profile Summary -->
+                    <div class="profile-summary animate-card" id="profileSummary"
+                        style="display: none; animation-delay: 0.3s;">
+                        <div class="profile-header">
+                            <h3><i class="fas fa-user-check"></i> Your Bio-Profile</h3>
+                            <a href="/profile_setup.html" class="edit-profile-btn">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                        </div>
+                        <div class="profile-grid" id="profileGrid">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Duration Selection & Generate (only shown when profile exists) -->
+                    <div id="generateSection" class="animate-card" style="display: none; animation-delay: 0.4s;">
+                        <div class="duration-section">
+                            <label>Plan Duration</label>
+                            <div class="duration-options">
+                                <label class="duration-option">
+                                    <input type="radio" name="duration" value="daily" checked>
+                                    <span class="duration-label">⚡ Daily</span>
+                                </label>
+                                <label class="duration-option">
+                                    <input type="radio" name="duration" value="weekly">
+                                    <span class="duration-label">📅 Weekly</span>
+                                </label>
+                                <label class="duration-option">
+                                    <input type="radio" name="duration" value="monthly">
+                                    <span class="duration-label">🗓️ Monthly</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-generate" id="generateBtn" onclick="generatePlan()">
+                            Generate Comprehensive Nutritional Protocol <i class="fas fa-wand-magic-sparkles"></i>
+                        </button>
+                        <p class="science-note">🧬 Analysis Engine will process your complete bio-profile to engineer
+                            your perfect
+                            fuel.
+                        </p>
+
+                        <!-- Saved Plans -->
+                        <div class="saved-plans-section" id="savedPlansSection" style="display: none;">
+                            <div class="saved-plans-header">
+                                <h3><i class="fas fa-history"></i> Your Saved Plans</h3>
+                            </div>
+                            <div class="plan-list" id="planList">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- End form-content-wrapper -->
+            </div>
+        </div>
+    </main>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-container">
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <i class="fas fa-dna loader-icon"></i>
+        </div>
+        <h2>Running Deep Analysis...</h2>
+        <p class="token-info">Using 20k tokens for comprehensive analysis</p>
+        <p>This might take up to 20 seconds.</p>
+    </div>
+
+
+    <script>
+        let userProfile = null;
+
+        // Check authentication and load profile
+        async function init() {
+            try {
+                const response = await fetch('/api/diet/user_profile');
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        document.getElementById('loginRequired').style.display = 'block';
+                    } else {
+                        throw new Error(`Server Error: ${response.status}`);
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (!data.authenticated) {
+                    document.getElementById('loginRequired').style.display = 'block';
+                    return;
+                }
+
+                if (!data.has_profile) {
+                    document.getElementById('profileRequired').style.display = 'block';
+                    return;
+                }
+
+                // Has profile - show summary and generate section
+                userProfile = data.profile;
+                showProfileSummary(userProfile);
+                document.getElementById('profileSummary').style.display = 'block';
+                document.getElementById('generateSection').style.display = 'block';
+
+                // Load saved plans
+                loadSavedPlans();
+
+            } catch (error) {
+                console.error('Init error:', error);
+                // Only show login required if it's truly an auth issue, 
+                // otherwise maybe it's just a network/profile error.
+                // For now, let's show an alert if it's a code error.
+                if (error.message.includes('authenticated')) {
+                    document.getElementById('loginRequired').style.display = 'block';
+                }
+            }
+        }
+
+        function showProfileSummary(profile) {
+            const grid = document.getElementById('profileGrid');
+            if (!grid) return;
+
+            const stats = [
+                { value: profile.name || profile.user_id || 'User', label: 'Name' },
+                { value: `${profile.age || '-'} yrs`, label: 'Age' },
+                { value: `${profile.weight || '-'} kg`, label: 'Weight' },
+                { value: `${profile.height || '-'} cm`, label: 'Height' },
+                { value: profile.goal || 'General', label: 'Goal' },
+                { value: profile.diet_type || 'Standard', label: 'Diet Type' }
+            ];
+
+            grid.innerHTML = stats.map(stat => `
+                <div class="profile-stat">
+                    <div class="value">${stat.value}</div>
+                    <div class="label">${stat.label}</div>
+                </div>
+            `).join('');
+
+            // Safe update of name in other parts if they exist
+            const userNameEl = document.getElementById('userName');
+            if (userNameEl && profile.name) {
+                userNameEl.textContent = profile.name.split(' ')[0];
+            }
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const hamburger = document.getElementById('hamburgerMenu');
+
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            if (hamburger) hamburger.classList.toggle('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/diet/my_plans');
+                const data = await response.json();
+
+                if (data.plans && data.plans.length > 0) {
+                    document.getElementById('savedPlansSection').style.display = 'block';
+                    const planList = document.getElementById('planList');
+
+                    planList.innerHTML = data.plans.map(plan => {
+                        const date = plan.created_at ? new Date(plan.created_at).toLocaleDateString() : 'Unknown';
+                        const duration = plan.duration_type || 'weekly';
+                        const isActive = plan.is_active;
+                        const planId = plan.id || plan._id;
+
+                        return `
+                            <div class="plan-item ${isActive ? 'active' : ''}" onclick="viewPlan('${planId}')">
+                                <div class="plan-info">
+                                    <div class="plan-icon">
+                                        <i class="fas fa-${duration === 'daily' ? 'bolt' : duration === 'monthly' ? 'calendar-alt' : 'calendar-week'}"></i>
+                                    </div>
+                                    <div class="plan-details">
+                                        <h4>${duration.charAt(0).toUpperCase() + duration.slice(1)} Plan</h4>
+                                        <span>Created ${date}</span>
+                                    </div>
+                                </div>
+                                ${isActive ? '<span class="active-badge">ACTIVE</span>' : ''}
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                console.error('Load plans error:', error);
+            }
+        });
+
+
+        async function generatePlan() {
+            const duration = document.querySelector('input[name="duration"]:checked').value;
+            const loader = document.getElementById('loadingScreen');
+            const btn = document.getElementById('generateBtn');
+
+            loader.classList.add('active');
+            loader.style.display = 'flex'; // Ensure display is flex for the transition
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/diet/generate_all', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ duration: duration })
+                });
+
+                const result = await response.json();
+
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+
+                // Store locally for dashboard (backward compatibility)
+                localStorage.setItem('fullDietData', JSON.stringify(result));
+                localStorage.removeItem('planSaved'); // Clear saved flag for new plan
+
+                // Redirect to dashboard with NEW flag so it loads localStorage, not DB
+                window.location.href = '/diet/dashboard?new=1';
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Analysis Engine Failed: ' + error.message);
+                loader.style.display = 'none';
+                btn.disabled = false;
+            }
+        }
+
+        async function viewPlan(planId) {
+            try {
+                const response = await fetch(`/api/diet/plan/${planId}`);
+                const data = await response.json();
+
+                if (data.plan) {
+                    localStorage.setItem('fullDietData', JSON.stringify(data.plan.plan_data));
+                    localStorage.setItem('planSaved', 'true');
+                    window.location.href = '/diet/dashboard';
+                }
+            } catch (error) {
+                console.error('View plan error:', error);
+            }
+        }
+
+        // Initialize on load
+        init();
+    </script>
+    <!-- Diety AI Assistant -->
+    <div id="dietyContainer" class="diety-container">
+        <div id="dietyChatWindow" class="diety-chat-window">
+            <div class="diety-header">
+                <img src="/static/img/logo.svg" alt="Diety">
+                <span>Diety</span>
+                <button id="dietyClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="dietyMessages" class="diety-messages"></div>
+            <div class="diety-input">
+                <input type="text" id="dietyInput" placeholder="How can I help you?">
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><i
+                        class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <div id="dietyToggle" class="diety-toggle">
+            <img src="/static/img/logo.svg" alt="Diety">
+            <div id="dietyBadge" class="diety-badge"></div>
+        </div>
+    </div>
+    <script src="/static/js/assistant_manager.js" defer></script>
+</body>
+
+</html>

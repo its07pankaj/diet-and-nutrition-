@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Engine | DietNotify</title>
+    <link rel="icon" type="image/svg+xml" href="/static/img/logo.svg">
+    <meta name="description"
+        content="Search and analyze nutritional data for thousands of vegetarian foods with precision.">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.94)),
+                url('/static/img/lab_bg.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.5;
+        }
+
+        .bg-animation div {
+            display: none;
+        }
+
+        /* Hide old shapes */
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Gen Z Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+            <a href="/index.html" class="brand-wrapper">
+                <div class="brand-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                        <defs>
+                            <linearGradient id="logo-gradient-nav-nut" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:var(--brand-diet)" />
+                                <stop offset="100%" style="stop-color:var(--brand-yellow)" />
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#logo-gradient-nav-nut)"
+                            d="M50 15C30 15 15 35 15 55C15 75 35 85 50 85C65 85 85 75 85 55C85 35 70 15 50 15ZM50 78C35 78 25 68 25 55C25 42 35 32 50 25C65 32 75 42 75 55C75 68 65 78 50 78Z" />
+                        <path fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"
+                            stroke-linejoin="round" d="M25 55H40L45 40L55 70L60 55H75" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="text-diet">Diet</span><span class="text-notify">Notify</span>
+                </div>
+            </a>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/nutrition.html">Nutrition Engine</a></li>
+                <li><a href="/diet">Scientific Protocol</a></li>
+                <li id="nav-auth-item">
+                    <a href="/login" class="btn btn-primary" style="padding: 8px 20px; border-radius: 25px;">🔐
+                        Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <script src="/static/js/navbar.js"></script>
+
+    <!-- MAIN SELECTION SCREEN ("CUBE SELECTION") -->
+    <section id="selectionScreen" class="container animate-fade-in"
+        style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 100px;">
+
+        <div class="section-header" style="margin-bottom: 40px;">
+            <span class="badge badge-glow">🔬 Nutrition Engine</span>
+            <h1 style="font-size: 2.8rem; margin-top: 16px;">Select Your <span class="gradient-text">Analysis
+                    Mode</span></h1>
+            <p>Choose between single food lookup or complete meal calculation</p>
+        </div>
+
+        <div class="swiper-wrapper" style="width: 100%; position: relative;">
+            <div class="swiper-arrow prev" onclick="scrollSwiper('sectionsGrid', -1)"
+                style="display: none; left: -10px;"><i class="fas fa-chevron-left"></i></div>
+            <div class="sections-grid" id="sectionsGrid" style="width: 100%; max-width: 900px; padding: 0;">
+                <!-- CUBE 1: Nutrition Search For Food -->
+                <div class="card selection-card" onclick="switchMode('search')">
+                    <div class="selection-image">
+                        <img src="/static/img/cards/search.png" alt="Search">
+                    </div>
+                    <h3>Single Food Search</h3>
+                    <p>Search any ingredient and view its complete nutritional profile with all micro and
+                        macronutrients.
+                    </p>
+                    <ul class="feature-list" style="margin: 20px 0;">
+                        <li>Instant search results</li>
+                        <li>Complete nutrient breakdown</li>
+                        <li>50+ data points per food</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;">
+                        <span>🚀</span> Launch Search
+                    </button>
+                </div>
+
+                <!-- CUBE 2: Daily Food Search -->
+                <div class="card selection-card" onclick="switchMode('meal')">
+                    <div class="selection-image">
+                        <img src="/static/img/cards/meal.png" alt="Meal">
+                    </div>
+                    <h3>Daily Meal Calculator</h3>
+                    <p>Build your complete meal by adding multiple foods. Get the aggregated nutritional totals.</p>
+                    <ul class="feature-list" style="margin: 20px 0;">
+                        <li>Add multiple ingredients</li>
+                        <li>Real-time aggregation</li>
+                        <li>Track your daily intake</li>
+                    </ul>
+                    <button class="btn btn-outline" style="width: 100%; border: 2px solid var(--primary);">
+                        <span>📊</span> Start Calculator
+                    </button>
+                </div>
+            </div>
+            <div class="swiper-arrow next" onclick="scrollSwiper('sectionsGrid', 1)"
+                style="display: none; right: -10px;"><i class="fas fa-chevron-right"></i></div>
+        </div>
+    </section>
+
+    <!-- MODE 1: SINGLE SEARCH -->
+    <section id="searchSection" class="container animate-fade-in"
+        style="display: none; padding-top: 120px; min-height: 100vh;">
+        <button class="btn btn-outline" onclick="showSelection()" style="margin-bottom: 30px;">
+            ← Back to Selection
+        </button>
+
+        <div class="search-container" style="margin-top: 0;">
+            <div class="section-header" style="margin-bottom: 30px;">
+                <span class="badge badge-glow">MODE: SINGLE FOOD SEARCH</span>
+                <h1 style="font-size: 2.5rem; margin-top: 16px;">Search <span class="gradient-text">Any Food</span></h1>
+                <p>Type a food name to see its complete nutritional profile</p>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" id="mainSearchInput" class="search-input"
+                    placeholder="🔍 Search foods... (e.g., 'rice', 'apple', 'paneer')" autocomplete="off">
+            </div>
+
+            <div id="searchResults" class="search-results">
+                <!-- Search Results -->
+            </div>
+
+            <!-- Detailed Data View -->
+            <div id="singleItemView" class="card"
+                style="display: none; margin-top: 40px; text-align: left; border-top: 4px solid var(--primary);">
+
+                <h2 id="detailName"
+                    style="font-size: 2rem; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+                    <span>🥗</span> <span class="gradient-text">Food Name</span>
+                </h2>
+
+                <div style="margin-bottom: 32px;">
+                    <h4
+                        style="display: flex; align-items: center; gap: 8px; color: var(--primary); margin-bottom: 16px; font-size: 1.1rem;">
+                        <span>📊</span> Major Nutrients
+                    </h4>
+                    <div id="majorNutrientsGrid" class="macros-grid">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+
+                <div>
+                    <h4
+                        style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); margin-bottom: 16px; font-size: 1.1rem;">
+                        <span>🔬</span> Detailed Nutrient Profile
+                    </h4>
+                    <div class="detailed-profile"
+                        style="background: var(--bg-color); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border-color);">
+                        <ul id="detailMicros"
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px;">
+                            <!-- Injected via JS -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODE 2: DAILY FOOD SEARCH -->
+    <section id="mealSection" class="container animate-fade-in"
+        style="display: none; padding-top: 120px; min-height: 100vh;">
+        <button class="btn btn-outline" onclick="showSelection()" style="margin-bottom: 30px;">
+            ← Back to Selection
+        </button>
+
+        <div class="section-header" style="margin-bottom: 40px;">
+            <span class="badge"
+                style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);">MODE:
+                MEAL CALCULATOR</span>
+            <h2 style="font-size: 2.2rem; margin-top: 16px;">Build Your <span class="gradient-text">Perfect Meal</span>
+            </h2>
+            <p>Add ingredients to calculate the total nutritional value of your meal</p>
+        </div>
+
+        <div class="calculator-area">
+            <!-- Left: Meal Builder -->
+            <div class="meal-builder">
+                <div class="search-bar" style="margin-bottom: 24px;">
+                    <input type="text" id="mealSearchInput" class="search-input"
+                        placeholder="🔍 Add ingredient (e.g., 'Roti', 'Daal', 'Rice')..." autocomplete="off">
+                    <div id="mealSearchResults" class="search-results"
+                        style="position: absolute; width: 100%; z-index: 100;"></div>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color);">
+                    <h3 style="display: flex; align-items: center; gap: 8px;">
+                        <span>🍽️</span> Current Plate
+                    </h3>
+                    <button class="btn btn-outline" id="clearLogBtn"
+                        style="padding: 8px 16px; font-size: 0.85rem; color: #f87171; border-color: #f87171;">
+                        Clear All
+                    </button>
+                </div>
+
+                <div id="mealList" class="added-items-list">
+                    <!-- Added items go here -->
+                </div>
+            </div>
+
+            <!-- Right: Aggregated Totals -->
+            <div class="summary-panel">
+                <h3
+                    style="margin-bottom: 24px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                    <span>📈</span> Total Nutrition
+                </h3>
+
+                <div id="mealSummaryGrid">
+                    <!-- Totals injected here -->
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                        <div style="font-size: 3rem; margin-bottom: 12px;">🥗</div>
+                        <p>Add items to your plate to see nutritional totals</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        @media (max-width: 768px) {
+            .section-header h1 {
+                font-size: 2rem !important;
+            }
+
+            .sections-grid {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                scroll-snap-type: x mandatory;
+                gap: 20px !important;
+                padding: 10px 5px 30px !important;
+                scrollbar-width: none;
+                margin: 0 -15px;
+            }
+
+            .sections-grid::-webkit-scrollbar {
+                display: none;
+            }
+
+            .selection-card {
+                flex: 0 0 calc(100% - 30px);
+                scroll-snap-align: start;
+                padding: 25px !important;
+                min-width: 280px;
+            }
+
+            .swiper-arrow {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            .search-bar input {
+                font-size: 0.9rem !important;
+                padding: 15px 20px !important;
+            }
+
+            .calculator-area {
+                grid-template-columns: 1fr !important;
+            }
+
+            #selectionScreen {
+                padding-top: 80px !important;
+            }
+        }
+
+        /* Improved Text Visibility */
+        .gradient-text {
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .card h3 {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .feature-list li {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+    </style>
+    <script>
+        function scrollSwiper(containerId, direction) {
+            const container = document.getElementById(containerId);
+            const firstCard = container.querySelector('.card, .selection-card');
+            if (firstCard) {
+                const cardWidth = firstCard.offsetWidth + 20;
+                container.scrollBy({ left: cardWidth * direction, behavior: 'smooth' });
+            }
+        }
+
+        function updateSwiperArrows(containerId) {
+            if (window.innerWidth > 768) return;
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const wrapper = container.closest('.swiper-wrapper');
+            const prevBtn = wrapper.querySelector('.swiper-arrow.prev');
+            const nextBtn = wrapper.querySelector('.swiper-arrow.next');
+            if (!prevBtn || !nextBtn) return;
+
+            const isScrollable = container.scrollWidth > container.clientWidth;
+            if (isScrollable) {
+                const atStart = container.scrollLeft <= 5;
+                const atEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 5;
+                prevBtn.style.display = atStart ? 'none' : 'flex';
+                nextBtn.style.display = atEnd ? 'none' : 'flex';
+            } else {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridId = 'sectionsGrid';
+            const el = document.getElementById(gridId);
+            if (el) {
+                el.addEventListener('scroll', () => updateSwiperArrows(gridId));
+                setTimeout(() => updateSwiperArrows(gridId), 800);
+            }
+            window.addEventListener('resize', () => updateSwiperArrows(gridId));
+        });
+    </script>
+    <script src="/static/js/nutrition_engine.js"></script>
+    <!-- Diety AI Assistant -->
+    <div id="dietyContainer" class="diety-container">
+        <div id="dietyChatWindow" class="diety-chat-window">
+            <div class="diety-header">
+                <img src="/static/img/logo.svg" alt="Diety">
+                <span>Diety</span>
+                <button id="dietyClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="dietyMessages" class="diety-messages"></div>
+            <div class="diety-input">
+                <input type="text" id="dietyInput" placeholder="How can I help you?">
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><i
+                        class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <div id="dietyToggle" class="diety-toggle">
+            <img src="/static/img/logo.svg" alt="Diety">
+            <div id="dietyBadge" class="diety-badge"></div>
+        </div>
+    </div>
+    <script src="/static/js/assistant_manager.js" defer></script>
+</body>
+
+</html>

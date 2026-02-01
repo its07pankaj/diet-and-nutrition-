@@ -1,0 +1,34 @@
+# DietNotify - Ignore patterns
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+
+# Firebase credentials - NEVER COMMIT
+app/core/firebase-admin-key.json
+firebase-admin-key.json
+*.json.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Local data
+data/users/
+
+# OS
+.DS_Store
+Thumbs.db
+.env

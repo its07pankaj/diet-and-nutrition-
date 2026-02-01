@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Debugger</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #111;
+            color: #0f0;
+            padding: 20px;
+        }
+
+        .log {
+            border: 1px solid #333;
+            padding: 10px;
+            margin: 10px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            background: #000;
+        }
+
+        .success {
+            color: #0f0;
+        }
+
+        .error {
+            color: #f00;
+        }
+
+        .warn {
+            color: #ff0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔔 Notification Diagnostics</h1>
+    <div style="background: #222; padding: 15px; border-bottom: 1px solid #444; margin-bottom: 20px;">
+        <h3>Step 1: Test Local Display</h3>
+        <p style="color: #bbb; margin-bottom: 10px;">Click this to see if your browser is ALLOWED to show popups by
+            Windows/OS.</p>
+        <button onclick="testLocalNotification()">🔔 TEST LOCAL POPUP</button>
+    </div>
+
+    <div style="background: #222; padding: 15px; border-bottom: 1px solid #444;">
+        <h3>Step 2: Full System Diagnostic</h3>
+        <button onclick="runDiagnostics()">▶ RUN NETWORK DIAGNOSTICS</button>
+        <button onclick="clearServiceWorkers()">⚠ RESET SERVICE WORKERS</button>
+    </div>
+
+    <div id="console" class="log"></div>
+
+    <script>
+        async function testLocalNotification() {
+            log('Attempting local notification...', 'info');
+            if (Notification.permission !== 'granted') {
+                const p = await Notification.requestPermission();
+                if (p !== 'granted') {
+                    log('❌ Permission denied!', 'error');
+                    return;
+                }
+            }
+
+            try {
+                const n = new Notification('🔔 Local Test', {
+                    body: 'If you see this, your browser can display notifications!',
+                    icon: '/static/img/logo.svg',
+                    requireInteraction: true
+                });
+                n.onclick = () => log('✅ You clicked the notification!', 'success');
+                log('✅ Local notification command sent. Check your screen corners/action center.', 'success');
+            } catch (e) {
+                log('❌ Local creation failed: ' + e.message, 'error');
+            }
+        }
+        function log(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            div.className = type;
+            document.getElementById('console').appendChild(div);
+            div.scrollIntoView();
+        }
+
+        async function clearServiceWorkers() {
+            log('Unregistering all service workers...', 'warn');
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (let registration of registrations) {
+                await registration.unregister();
+                log('Unregistered SW: ' + registration.scope, 'success');
+            }
+            log('Done. Please reload the page.', 'warn');
+        }
+
+        async function runDiagnostics() {
+            document.getElementById('console').innerHTML = '';
+            log('Starting diagnostics...', 'info');
+
+            // 1. Browser Support
+            if (!('Notification' in window)) {
+                log('❌ Browser does not support Notifications', 'error');
+                return;
+            }
+            log('✅ Browser supports Notifications', 'success');
+
+            if (!('serviceWorker' in navigator)) {
+                log('❌ Browser does not support Service Workers', 'error');
+                return;
+            }
+            log('✅ Browser supports Service Workers', 'success');
+
+            // 2. Permission Status
+            log('Current Permission: ' + Notification.permission, 'warn');
+            if (Notification.permission !== 'granted') {
+                log('Requesting permission...', 'info');
+                const perm = await Notification.requestPermission();
+                log('New Permission: ' + perm, perm === 'granted' ? 'success' : 'error');
+                if (perm !== 'granted') return;
+            }
+
+            // 3. Firebase Config
+            try {
+                log('Fetching Firebase config...', 'info');
+                const cfgReq = await fetch('/api/notifications/firebase-config');
+                const cfg = await cfgReq.json();
+                if (!cfg.config || !cfg.vapidKey) {
+                    log('❌ Invalid configuration received', 'error');
+                    console.log(cfg);
+                    return;
+                }
+                log('✅ Config received. Project: ' + cfg.config.projectId, 'success');
+
+                // 4. Initialize Firebase
+                // Dynamic import to avoid caching issues
+                // We'll use the globals if they exist or load them
+                if (typeof firebase === 'undefined') {
+                    log('❌ Firebase SDK not loaded in window', 'error');
+                    return;
+                }
+
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(cfg.config);
+                    log('✅ Firebase initialized', 'success');
+                } else {
+                    log('ℹ Firebase already initialized', 'info');
+                }
+
+                const messaging = firebase.messaging();
+
+                // Listen for foreground messages (since we are on the page)
+                messaging.onMessage((payload) => {
+                    log('✅ MESSAGE RECEIVED! (Foreground)', 'success');
+                    log('Title: ' + payload.notification.title, 'success');
+                    log('Body: ' + payload.notification.body, 'success');
+
+                    // Force a browser notification even in foreground (for testing)
+                    new Notification(payload.notification.title, {
+                        body: payload.notification.body,
+                        icon: '/static/img/logo.svg'
+                    });
+                });
+
+                // 5. Service Worker Registration
+                log('Ensuring Service Worker...', 'info');
+                const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js?v=' + Date.now());
+                log('✅ Service Worker registered. Scope: ' + registration.scope, 'success');
+
+                await new Promise(r => setTimeout(r, 1000)); // Wait for activation
+
+                // 6. Get Token
+                log('Requesting FCM Token...', 'info');
+                const token = await messaging.getToken({
+                    vapidKey: cfg.vapidKey,
+                    serviceWorkerRegistration: registration
+                });
+
+                if (token) {
+                    log('✅ Token obtained: ' + token.substring(0, 20) + '...', 'success');
+
+                    // 7. Test Send
+                    log('Sending backend test request...', 'info');
+                    const testReq = await fetch('/api/notifications/test', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: token })
+                    });
+                    const testRes = await testReq.json();
+
+                    if (testRes.success) {
+                        log('✅ Backend accepted request!', 'success');
+                        log('Waiting for notification to appear...', 'warn');
+                    } else {
+                        log('❌ Backend rejected request: ' + testRes.error, 'error');
+                    }
+
+                } else {
+                    log('❌ No token retrieved', 'error');
+                }
+
+            } catch (e) {
+                log('❌ EXCEPTION: ' + e.message, 'error');
+                console.error(e);
+            }
+        }
+    </script>
+
+    <!-- Load Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js"></script>
+</body>
+
+</html>

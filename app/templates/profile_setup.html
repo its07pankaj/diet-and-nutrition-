@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile | DietNotify</title>
+    <link rel="icon" type="image/svg+xml" href="/static/img/logo.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        :root {
+            /* Light Theme Overrides */
+            --bg-dark: #ffffff;
+            /* Was dark, now white */
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --primary: #0891b2;
+            --primary-hover: #0e7490;
+            --accent-primary: #0891b2;
+            /* Teal */
+            --accent: #84cc16;
+            /* Lime */
+            --text-main: #1f2937;
+            --text-light: #6b7280;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --gradient: linear-gradient(135deg, #0891b2, #facc15);
+
+            --glass-border: #e4e4e7;
+            --text-secondary: #52525b;
+            --nav-height: 80px;
+
+            --primary-glow: rgba(22, 163, 74, 0.2);
+            /* This glow might need adjustment based on new primary */
+            --text: #09090b;
+            /* Black Text */
+            --border: #e4e4e7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.88)),
+                url('/static/img/kitchen_bg.png');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        /* Background Image refined via .bg-animation */
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(40px, 40px) scale(1.1);
+            }
+        }
+
+        /* Navbar Styles from diet_create.html */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 1400px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px) saturate(200%);
+            -webkit-backdrop-filter: blur(25px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 100px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .navbar .container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Navbar specific logo */
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            width: auto;
+            /* Override potentially conflicting width */
+            margin-bottom: 0;
+        }
+
+        .logo-standalone {
+            height: 55px;
+            filter: drop-shadow(0 0 15px rgba(34, 197, 94, 0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .navbar .logo:hover .logo-standalone {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 10px 22px;
+            border-radius: 50px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+            background: rgba(22, 163, 74, 0.08);
+            /* Green tint */
+        }
+
+        /* Login Button Style */
+        .btn-primary {
+            background: var(--gradient);
+            color: #000;
+            font-weight: 600;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        /* Container adjustment for fixed nav */
+        .wizard-container {
+            position: relative;
+            z-index: 10;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: calc(var(--nav-height) + 20px) 20px 100px;
+            /* Increased bottom padding for mobile keyboard */
+        }
+
+        /* Header */
+        .wizard-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        /* Renamed wizard logo class to avoid conflict */
+        .wizard-logo {
+            width: 120px;
+            margin-bottom: 24px;
+        }
+
+        .wizard-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .gradient-text {
+            background: var(--gradient);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .wizard-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .step-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .step-indicator.completed {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Step Card */
+        .step-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 24px;
+            padding: 40px;
+            display: none;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .step-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-header {
+            margin-bottom: 28px;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .step-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 24px;
+            scroll-margin-top: 100px;
+            /* Ensure focused fields aren't hidden by top nav/header */
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* Selection Cards */
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        .selection-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .selection-card:hover {
+            border-color: rgba(34, 197, 94, 0.5);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .selection-card.selected {
+            border-color: var(--primary);
+            background: rgba(34, 197, 94, 0.1);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .selection-icon {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .selection-text {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .selection-subtext {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Range Slider */
+        .range-container {
+            padding: 10px 0;
+        }
+
+        .range-slider {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .range-value {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 10px;
+        }
+
+        /* Multi-select */
+        .multi-select-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .multi-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .multi-card:hover {
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        .multi-card.selected {
+            border-color: var(--primary);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn-back:hover {
+            border-color: var(--text-secondary);
+            color: var(--text);
+        }
+
+        .btn-next {
+            background: var(--gradient);
+            border: none;
+            color: #000;
+            margin-left: auto;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
+        }
+
+        .btn-submit {
+            background: var(--gradient);
+            border: none;
+            color: #000;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+        }
+
+        /* Auto-save indicator */
+        .autosave-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: none;
+            z-index: 100;
+        }
+
+        .autosave-indicator.show {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .autosave-indicator.saved {
+            color: var(--primary);
+        }
+
+        /* Hidden inputs */
+        input[type="hidden"] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background -->
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+            <a href="/index.html" class="brand-wrapper">
+                <div class="brand-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                        <defs>
+                            <linearGradient id="logo-gradient-prof-nav" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:var(--brand-diet)" />
+                                <stop offset="100%" style="stop-color:var(--brand-yellow)" />
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#logo-gradient-prof-nav)"
+                            d="M50 15C30 15 15 35 15 55C15 75 35 85 50 85C65 85 85 75 85 55C85 35 70 15 50 15ZM50 78C35 78 25 68 25 55C25 42 35 32 50 25C65 32 75 42 75 55C75 68 65 78 50 78Z" />
+                        <path fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"
+                            stroke-linejoin="round" d="M25 55H40L45 40L55 70L60 55H75" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="text-diet">Diet</span><span class="text-notify">Notify</span>
+                </div>
+            </a>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/nutrition.html">Nutrition Engine</a></li>
+                <li><a href="/diet">Scientific Protocol</a></li>
+                <li id="nav-auth-item">
+                    <a href="/login" class="btn btn-primary" style="padding: 8px 20px; border-radius: 25px;">🔐
+                        Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <script src="/static/js/navbar.js"></script>
+    <script src="/static/js/strict_auth.js"></script>
+
+    <!-- Wizard Container -->
+    <div class="wizard-container">
+        <!-- Sidebar Shell (Desktop Column 1) -->
+        <div class="wizard-sidebar">
+            <!-- Header -->
+            <div class="wizard-header">
+                <!-- Text Logo -->
+                <div style="margin-bottom: 24px;">
+                    <a href="/index.html" class="brand-wrapper" style="justify-content: center;">
+                        <div class="brand-icon" style="height: 50px; width: 50px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                                <defs>
+                                    <linearGradient id="logo-gradient-prof-wiz" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:var(--brand-diet)" />
+                                        <stop offset="100%" style="stop-color:var(--brand-yellow)" />
+                                    </linearGradient>
+                                </defs>
+                                <path fill="url(#logo-gradient-prof-wiz)"
+                                    d="M50 15C30 15 15 35 15 55C15 75 35 85 50 85C65 85 85 75 85 55C85 35 70 15 50 15ZM50 78C35 78 25 68 25 55C25 42 35 32 50 25C65 32 75 42 75 55C75 68 65 78 50 78Z" />
+                                <path fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"
+                                    stroke-linejoin="round" d="M25 55H40L45 40L55 70L60 55H75" />
+                            </svg>
+                        </div>
+                        <div class="brand-text" style="font-size: 2.2rem;">
+                            <span class="text-diet">Diet</span><span class="text-notify">Notify</span>
+                        </div>
+                    </a>
+                </div>
+                <h1 class="wizard-title">Build Your <br><span class="gradient-text">Profile</span></h1>
+                <p class="wizard-subtitle">Personalize your journey with biological data</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-line">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="step-indicator active" data-step="1">1</div>
+                <div class="step-indicator" data-step="2">2</div>
+                <div class="step-indicator" data-step="3">3</div>
+                <div class="step-indicator" data-step="4">4</div>
+                <div class="step-indicator" data-step="5">5</div>
+                <div class="step-indicator" data-step="6"><i class="fas fa-check"></i></div>
+            </div>
+        </div>
+
+        <!-- Form Shell (Desktop Column 2) -->
+        <form id="profileForm">
+
+            <!-- STEP 1: Basic Info -->
+            <div class="step-card active" id="step1">
+                <div class="step-header">
+                    <h2 class="step-title">📋 Basic Information</h2>
+                    <p class="step-description">Let's start with your fundamental metrics</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="name" class="form-input" placeholder="Your name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Gender Identity</label>
+                    <div class="selection-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="selection-card" onclick="selectOption('gender', 'Male', this)">
+                            <span class="selection-icon"><i class="fas fa-mars" style="color: #3b82f6;"></i></span>
+                            <span class="selection-text">Male</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('gender', 'Female', this)">
+                            <span class="selection-icon"><i class="fas fa-venus" style="color: #ec4899;"></i></span>
+                            <span class="selection-text">Female</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="gender" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Age (years)</label>
+                        <input type="number" name="age" class="form-input" placeholder="25" required min="10" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Height (cm)</label>
+                        <input type="number" name="height" class="form-input" placeholder="170" required min="100"
+                            max="250">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Current Weight (kg)</label>
+                    <input type="number" name="weight" class="form-input" placeholder="70" required step="0.1" min="30"
+                        max="300">
+                </div>
+
+                <div class="btn-row">
+                    <button type="button" class="btn btn-next" onclick="nextStep(1)">Next Step →</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Lifestyle -->
+            <div class="step-card" id="step2">
+                <div class="step-header">
+                    <h2 class="step-title">🏃 Lifestyle & Activity</h2>
+                    <p class="step-description">Your daily activity affects calorie needs</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Daily Activity Profile</label>
+                    <div class="selection-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="selection-card" onclick="selectOption('job_activity', 'Sedentary', this)">
+                            <span class="selection-icon"><i class="fas fa-laptop"></i></span>
+                            <span class="selection-text">Sedentary</span>
+                            <span class="selection-subtext">Office/Desk based</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('job_activity', 'Moderate', this)">
+                            <span class="selection-icon"><i class="fas fa-walking"></i></span>
+                            <span class="selection-text">Moderate</span>
+                            <span class="selection-subtext">On your feet</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('job_activity', 'Active', this)">
+                            <span class="selection-icon"><i class="fas fa-hammer"></i></span>
+                            <span class="selection-text">Vigorous</span>
+                            <span class="selection-subtext">Manual labor</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="job_activity">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Exercise Days per Week</label>
+                    <div class="range-container">
+                        <input type="range" name="exercise_days" class="range-slider" min="0" max="7" value="3"
+                            oninput="updateRangeDisplay(this, 'exerciseDisplay', ' days/week')">
+                        <div class="range-value" id="exerciseDisplay">3 days/week</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Average Sleep Hours</label>
+                    <div class="selection-grid" style="grid-template-columns: repeat(4, 1fr);">
+                        <div class="selection-card" onclick="selectOption('sleep_hours', '<6', this)">
+                            <span class="selection-text">&lt;6 hrs</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('sleep_hours', '6-7', this)">
+                            <span class="selection-text">6-7 hrs</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('sleep_hours', '7-8', this)">
+                            <span class="selection-text">7-8 hrs</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('sleep_hours', '8+', this)">
+                            <span class="selection-text">8+ hrs</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="sleep_hours">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Hydration Habits (Water Intake)</label>
+                    <div class="selection-grid" style="grid-template-columns: repeat(4, 1fr);">
+                        <div class="selection-card" onclick="selectOption('water_intake', '<4', this)">
+                            <span class="selection-icon"><i class="fas fa-tint" style="opacity: 0.3;"></i></span>
+                            <span class="selection-text">&lt;4 glasses</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('water_intake', '4-6', this)">
+                            <span class="selection-icon"><i class="fas fa-tint"></i></span>
+                            <span class="selection-text">4-6 glasses</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('water_intake', '6-8', this)">
+                            <span class="selection-icon"><i class="fas fa-tint"
+                                    style="color: var(--primary);"></i></span>
+                            <span class="selection-text">6-8 glasses</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('water_intake', '8+', this)">
+                            <span class="selection-icon"><i class="fas fa-faucet-drip"
+                                    style="color: var(--primary);"></i></span>
+                            <span class="selection-text">8+ glasses</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="water_intake">
+                </div>
+
+                <div class="btn-row">
+                    <button type="button" class="btn btn-back" onclick="prevStep(2)">← Back</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(2)">Next Step →</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Health -->
+            <div class="step-card" id="step3">
+                <div class="step-header">
+                    <h2 class="step-title">🏥 Health Conditions</h2>
+                    <p class="step-description">This helps us customize safe recommendations</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Any medical conditions? (Select all that apply)</label>
+                    <div class="multi-select-grid">
+                        <div class="multi-card" onclick="toggleMulti(this, 'conditions')">Diabetes</div>
+                        <div class="multi-card" onclick="toggleMulti(this, 'conditions')">Thyroid Issues</div>
+                        <div class="multi-card" onclick="toggleMulti(this, 'conditions')">PCOS/PCOD</div>
+                        <div class="multi-card" onclick="toggleMulti(this, 'conditions')">High BP</div>
+                        <div class="multi-card" onclick="toggleMulti(this, 'conditions')">Cholesterol</div>
+                        <div class="multi-card" onclick="toggleMulti(this, 'conditions')" data-none="true">None</div>
+                    </div>
+                    <input type="hidden" name="conditions" value="">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Food allergies/intolerances? (Select all that apply)</label>
+                    <div class="multi-select-grid">
+                        <div class="multi-card" onclick="toggleMulti(this, 'allergies')">Gluten</div>
+                        <div class="multi-card" onclick="toggleMulti(this, 'allergies')">Dairy</div>
+                        <div class="multi-card" onclick="toggleMulti(this, 'allergies')">Nuts</div>
+                        <div class="multi-card" onclick="toggleMulti(this, 'allergies')">Soy</div>
+                        <div class="multi-card" onclick="toggleMulti(this, 'allergies')" data-none="true">None</div>
+                    </div>
+                    <input type="hidden" name="allergies" value="">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Currently on any medications?</label>
+                    <div class="selection-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="selection-card"
+                            onclick="selectOption('on_medication', 'No', this); hideInput('medicationInput')">
+                            <span class="selection-text">No</span>
+                        </div>
+                        <div class="selection-card"
+                            onclick="selectOption('on_medication', 'Yes', this); showInput('medicationInput')">
+                            <span class="selection-text">Yes</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="on_medication" value="No">
+                    <input type="text" name="medications" id="medicationInput" class="form-input"
+                        placeholder="Which medications?" style="margin-top: 12px; display: none;">
+                </div>
+
+                <div class="btn-row">
+                    <button type="button" class="btn btn-back" onclick="prevStep(3)">← Back</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(3)">Next Step →</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: Food Preferences -->
+            <div class="step-card" id="step4">
+                <div class="step-header">
+                    <h2 class="step-title">🍽️ Food Preferences</h2>
+                    <p class="step-description">Your taste matters for sustainable diet plans</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nutritional Philosophy</label>
+                    <div class="selection-grid">
+                        <div class="selection-card" onclick="selectOption('diet_type', 'Vegetarian', this)">
+                            <span class="selection-icon"><i class="fas fa-leaf"
+                                    style="color: var(--primary);"></i></span>
+                            <span class="selection-text">Vegetarian</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('diet_type', 'Vegan', this)">
+                            <span class="selection-icon"><i class="fas fa-seedling"
+                                    style="color: var(--primary);"></i></span>
+                            <span class="selection-text">Vegan</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('diet_type', 'Eggetarian', this)">
+                            <span class="selection-icon"><i class="fas fa-egg" style="color: #f59e0b;"></i></span>
+                            <span class="selection-text">Eggetarian</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('diet_type', 'Jain', this)">
+                            <span class="selection-icon"><i class="fas fa-pray" style="color: #8b5cf6;"></i></span>
+                            <span class="selection-text">Jain</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="diet_type">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Preferred Cuisine</label>
+                    <div class="selection-grid">
+                        <div class="selection-card" onclick="selectOption('cuisine', 'North Indian', this)">
+                            <span class="selection-text">North Indian</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('cuisine', 'South Indian', this)">
+                            <span class="selection-text">South Indian</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('cuisine', 'Pan-Indian', this)">
+                            <span class="selection-text">Pan-Indian</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('cuisine', 'Mixed', this)">
+                            <span class="selection-text">Mixed/Global</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="cuisine">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Flavor Intensity</label>
+                        <div class="selection-grid" style="grid-template-columns: repeat(3, 1fr);">
+                            <div class="selection-card" onclick="selectOption('spice_level', 'Mild', this)">
+                                <span class="selection-text">Balanced</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('spice_level', 'Medium', this)">
+                                <span class="selection-text">Aromatic</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('spice_level', 'Spicy', this)">
+                                <span class="selection-text">High-Heat</span>
+                            </div>
+                        </div>
+                        <input type="hidden" name="spice_level">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Meals per Day</label>
+                        <div class="selection-grid" style="grid-template-columns: repeat(4, 1fr);">
+                            <div class="selection-card" onclick="selectOption('meals_per_day', '2', this)">
+                                <span class="selection-text">2</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('meals_per_day', '3', this)">
+                                <span class="selection-text">3</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('meals_per_day', '4', this)">
+                                <span class="selection-text">4</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('meals_per_day', '5+', this)">
+                                <span class="selection-text">5+</span>
+                            </div>
+                        </div>
+                        <input type="hidden" name="meals_per_day">
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button type="button" class="btn btn-back" onclick="prevStep(4)">← Back</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(4)">Next Step →</button>
+                </div>
+            </div>
+
+            <!-- STEP 5: Goals -->
+            <div class="step-card" id="step5">
+                <div class="step-header">
+                    <h2 class="step-title">🎯 Your Goals</h2>
+                    <p class="step-description">What do you want to achieve?</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Strategic Objective</label>
+                    <div class="selection-grid" style="grid-template-columns: repeat(2, 1fr);">
+                        <div class="selection-card" onclick="selectOption('goal', 'Fat Loss', this)">
+                            <span class="selection-icon"><i class="fas fa-fire" style="color: #ef4444;"></i></span>
+                            <span class="selection-text">Weight Optimization</span>
+                            <span class="selection-subtext">Scientific fat loss</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('goal', 'Muscle Gain', this)">
+                            <span class="selection-icon"><i class="fas fa-dumbbell" style="color: #6366f1;"></i></span>
+                            <span class="selection-text">Muscle Synthesis</span>
+                            <span class="selection-subtext">Hypertrophy focus</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('goal', 'Maintenance', this)">
+                            <span class="selection-icon"><i class="fas fa-balance-scale"
+                                    style="color: #10b981;"></i></span>
+                            <span class="selection-text">Bio-Maintenance</span>
+                            <span class="selection-subtext">Peak vitality</span>
+                        </div>
+                        <div class="selection-card" onclick="selectOption('goal', 'Energy', this)">
+                            <span class="selection-icon"><i class="fas fa-bolt" style="color: #f59e0b;"></i></span>
+                            <span class="selection-text">Performance</span>
+                            <span class="selection-subtext">Elevated energy</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="goal">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Target Weight (kg) - Optional</label>
+                        <input type="number" name="target_weight" class="form-input" placeholder="65" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Timeline</label>
+                        <div class="selection-grid" style="grid-template-columns: repeat(3, 1fr);">
+                            <div class="selection-card" onclick="selectOption('timeline', '1 month', this)">
+                                <span class="selection-text">1 month</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('timeline', '3 months', this)">
+                                <span class="selection-text">3 months</span>
+                            </div>
+                            <div class="selection-card" onclick="selectOption('timeline', '6 months', this)">
+                                <span class="selection-text">6 months</span>
+                            </div>
+                        </div>
+                        <input type="hidden" name="timeline">
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button type="button" class="btn btn-back" onclick="prevStep(5)">← Back</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(5)">Review Profile →</button>
+                </div>
+            </div>
+
+            <!-- STEP 6: Review & Confirm (The "Details Page") -->
+            <div class="step-card" id="step6">
+                <div class="step-header">
+                    <h2 class="step-title">📋 Profile Summary</h2>
+                    <p class="step-description">Verify your scientific profile details before we proceed</p>
+                </div>
+
+                <div class="summary-dashboard"
+                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                    <div class="summary-item"
+                        style="padding: 20px; background: rgba(0,0,0,0.02); border-radius: 16px; border: 1px solid var(--border);">
+                        <label
+                            style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Primary
+                            Metrics</label>
+                        <div id="summaryPrimary"
+                            style="margin-top: 10px; font-weight: 600; font-size: 1.1rem; line-height: 1.6;"></div>
+                    </div>
+                    <div class="summary-item"
+                        style="padding: 20px; background: rgba(22, 163, 74, 0.05); border-radius: 16px; border: 1px solid var(--primary);">
+                        <label
+                            style="font-size: 0.75rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">Health
+                            Insights</label>
+                        <div id="summaryHealth"
+                            style="margin-top: 10px; font-weight: 600; font-size: 1.1rem; line-height: 1.6; color: var(--primary);">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-list-card"
+                    style="padding: 24px; background: rgba(0,0,0,0.02); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 30px;">
+                    <h4 style="margin-bottom: 16px; font-size: 1rem;">Preferences & Context</h4>
+                    <div id="summaryPreferences"
+                        style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 0.95rem; color: var(--text-secondary);">
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button type="button" class="btn btn-back" onclick="prevStep(6)">← Edit Data</button>
+                    <button type="button" class="btn btn-submit" onclick="submitProfile()"
+                        style="width: auto; padding: 14px 40px;">
+                        🎯 Confirm & Initialize Scientific Analysis
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Auto-save indicator -->
+    <div class="autosave-indicator" id="autosaveIndicator">
+        <span>💾</span> <span id="autosaveText">Saving...</span>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 6;
+        let profileData = {};
+        let multiSelections = { conditions: [], allergies: [] };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check for explicit "restart" parameter to fix the step 2 glitch
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('restart') === '1') {
+                currentStep = 1;
+                updateProgress();
+                return;
+            }
+
+            await loadExistingProfile();
+            updateProgress();
+
+            // Add focus listeners for keyboard overlap handling
+            document.querySelectorAll('input, select').forEach(input => {
+                input.addEventListener('focus', () => {
+                    setTimeout(() => {
+                        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                });
+            });
+        });
+
+        // Load existing profile data if any
+        async function loadExistingProfile() {
+            try {
+                const response = await fetch('/api/auth/profile/progress');
+                const data = await response.json();
+
+                if (!data.authenticated) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                if (data.is_complete) {
+                    window.location.href = '/diet/create';
+                    return;
+                }
+
+                if (data.profile) {
+                    profileData = data.profile;
+                    currentStep = data.current_step || 1;
+
+                    // Populate form fields
+                    populateFields(profileData);
+
+                    // Show correct step
+                    goToStep(currentStep);
+                }
+            } catch (e) {
+                console.log('Could not load profile:', e);
+            }
+        }
+
+        // Populate form fields with saved data
+        function populateFields(data) {
+            Object.keys(data).forEach(key => {
+                const input = document.querySelector(`[name="${key}"]`);
+                if (input) {
+                    if (input.type === 'hidden') {
+                        input.value = data[key];
+                        // Select the corresponding card
+                        const cards = input.parentElement.querySelectorAll('.selection-card');
+                        cards.forEach(card => {
+                            if (card.textContent.includes(data[key]) ||
+                                card.querySelector('.selection-text')?.textContent === data[key]) {
+                                card.classList.add('selected');
+                            }
+                        });
+                    } else {
+                        input.value = data[key];
+                    }
+                }
+            });
+
+            // Handle multi-select
+            if (data.conditions) {
+                multiSelections.conditions = data.conditions.split(',').filter(Boolean);
+                updateMultiCards('conditions');
+            }
+            if (data.allergies) {
+                multiSelections.allergies = data.allergies.split(',').filter(Boolean);
+                updateMultiCards('allergies');
+            }
+        }
+
+        function updateMultiCards(field) {
+            const input = document.querySelector(`[name="${field}"]`);
+            const cards = input.parentElement.querySelectorAll('.multi-card');
+            cards.forEach(card => {
+                if (multiSelections[field].includes(card.textContent)) {
+                    card.classList.add('selected');
+                }
+            });
+        }
+
+        // Navigation
+        function nextStep(step) {
+            if (!validateStep(step)) return;
+            collectStepData(step);
+            saveCurrentStep(step);
+
+            currentStep = step + 1;
+            goToStep(currentStep);
+        }
+
+        function prevStep(step) {
+            currentStep = step - 1;
+            goToStep(currentStep);
+        }
+
+        function goToStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step-card').forEach(card => card.classList.remove('active'));
+            // Show target step
+            document.getElementById(`step${step}`).classList.add('active');
+
+            if (step === 6) populateSummary();
+
+            updateProgress();
+            window.scrollTo(0, 0);
+        }
+
+        function populateSummary() {
+            collectStepData(5);
+            const m = calculateMetrics();
+            const p = profileData;
+
+            document.getElementById('summaryPrimary').innerHTML = `
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">${p.name || 'User'}</span><br>
+                ${p.gender}, ${p.age} yrs<br>
+                ${p.height} cm / ${p.weight} kg
+            `;
+
+            document.getElementById('summaryHealth').innerHTML = `
+                Scientific BMI: ${m.bmi}<br>
+                Resting BMR: ${m.bmr}<br>
+                Daily TDEE: ${m.tdee}
+            `;
+
+            document.getElementById('summaryPreferences').innerHTML = `
+                <div style="padding: 8px; border-bottom: 1px solid rgba(0,0,0,0.05);"><strong style="color: var(--text);">Style:</strong> ${p.diet_type || 'N/A'}</div>
+                <div style="padding: 8px; border-bottom: 1px solid rgba(0,0,0,0.05);"><strong style="color: var(--text);">Cuisine:</strong> ${p.cuisine || 'N/A'}</div>
+                <div style="padding: 8px; border-bottom: 1px solid rgba(0,0,0,0.05);"><strong style="color: var(--text);">Objective:</strong> ${p.goal || 'N/A'}</div>
+                <div style="padding: 8px; border-bottom: 1px solid rgba(0,0,0,0.05);"><strong style="color: var(--text);">Energy:</strong> ${p.job_activity || 'N/A'}</div>
+            `;
+        }
+
+        function updateProgress() {
+            const progressPercent = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            const fill = document.getElementById('progressFill');
+            fill.style.width = progressPercent + '%';
+            fill.style.height = progressPercent + '%';
+
+            document.querySelectorAll('.step-indicator').forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index + 1 === currentStep) dot.classList.add('active');
+                if (index + 1 < currentStep) dot.classList.add('completed');
+            });
+        }
+
+        // Data collection
+        function collectStepData(step) {
+            const section = document.getElementById(`step${step}`);
+            const inputs = section.querySelectorAll('input, select');
+
+            inputs.forEach(input => {
+                if (input.name && input.value) {
+                    profileData[input.name] = input.value;
+                }
+            });
+        }
+
+        // Validation
+        function validateStep(step) {
+            const section = document.getElementById(`step${step}`);
+            const required = section.querySelectorAll('[required]');
+            let valid = true;
+
+            required.forEach(input => {
+                if (!input.value) {
+                    input.style.borderColor = '#ef4444';
+                    valid = false;
+                    input.animate([
+                        { transform: 'translateX(0)' },
+                        { transform: 'translateX(8px)' },
+                        { transform: 'translateX(-8px)' },
+                        { transform: 'translateX(0)' }
+                    ], { duration: 300 });
+                } else {
+                    input.style.borderColor = 'var(--border)';
+                }
+            });
+
+            return valid;
+        }
+
+        // Selection handlers
+        function selectOption(field, value, element) {
+            const parent = element.parentElement;
+            parent.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+
+            const input = document.querySelector(`input[name="${field}"]`);
+            if (input) input.value = value;
+        }
+
+        function toggleMulti(element, field) {
+            const value = element.textContent.trim();
+            const isNone = element.dataset.none === 'true';
+
+            if (isNone) {
+                // Clear all selections
+                multiSelections[field] = ['None'];
+                element.parentElement.querySelectorAll('.multi-card').forEach(c => c.classList.remove('selected'));
+                element.classList.add('selected');
+            } else {
+                // Remove "None" if selecting something else
+                multiSelections[field] = multiSelections[field].filter(v => v !== 'None');
+                element.parentElement.querySelector('[data-none="true"]')?.classList.remove('selected');
+
+                if (element.classList.contains('selected')) {
+                    element.classList.remove('selected');
+                    multiSelections[field] = multiSelections[field].filter(v => v !== value);
+                } else {
+                    element.classList.add('selected');
+                    multiSelections[field].push(value);
+                }
+            }
+
+            const input = document.querySelector(`input[name="${field}"]`);
+            if (input) input.value = multiSelections[field].join(',');
+        }
+
+        function updateRangeDisplay(slider, displayId, suffix) {
+            document.getElementById(displayId).textContent = slider.value + suffix;
+        }
+
+        function showInput(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function hideInput(id) {
+            document.getElementById(id).style.display = 'none';
+            document.getElementById(id).value = '';
+        }
+
+        // Auto-save
+        async function saveCurrentStep(step) {
+            showAutosave('Saving...');
+
+            try {
+                const response = await fetch('/api/auth/profile/step', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        step: step,
+                        data: profileData
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showAutosave('Saved ✓', true);
+                }
+            } catch (e) {
+                showAutosave('Save failed', false);
+            }
+        }
+
+        function showAutosave(text, success = null) {
+            const indicator = document.getElementById('autosaveIndicator');
+            const textEl = document.getElementById('autosaveText');
+
+            indicator.classList.add('show');
+            if (success === true) indicator.classList.add('saved');
+            else indicator.classList.remove('saved');
+
+            textEl.textContent = text;
+
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        // Calculate scientific metrics
+        function calculateMetrics() {
+            const p = profileData;
+            const heightM = p.height / 100;
+
+            // BMI
+            const bmi = (p.weight / (heightM * heightM)).toFixed(1);
+
+            // BMR (Mifflin-St Jeor)
+            let bmr = (10 * p.weight) + (6.25 * p.height) - (5 * p.age);
+            bmr += (p.gender === 'Male') ? 5 : -161;
+
+            // TDEE
+            const multipliers = {
+                'Sedentary': 1.2,
+                'Moderate': 1.55,
+                'Active': 1.725
+            };
+            const tdee = Math.round(bmr * (multipliers[p.job_activity] || 1.375));
+
+            return { bmi, bmr: Math.round(bmr), tdee };
+        }
+
+        // Submit profile
+        async function submitProfile() {
+            // Data is already current from collectStepData(5) in populateSummary()
+            // But we can run it again to be safe if they changed something in hidden logic
+            collectStepData(5);
+
+            const metrics = calculateMetrics();
+            const finalProfile = { ...profileData, ...metrics };
+
+            showAutosave('Completing profile...');
+
+            try {
+                const response = await fetch('/api/auth/profile/step', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        step: 5,
+                        data: finalProfile
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAutosave('Profile Complete! ✓', true);
+                    setTimeout(() => {
+                        window.location.href = '/diet/create';
+                    }, 1000);
+                } else {
+                    throw new Error(result.error || 'Failed to save');
+                }
+            } catch (e) {
+                alert('Error saving profile: ' + e.message);
+            }
+        }
+    </script>
+    <!-- Diety AI Assistant -->
+    <div id="dietyContainer" class="diety-container">
+        <div id="dietyChatWindow" class="diety-chat-window">
+            <div class="diety-header">
+                <img src="/static/img/logo.svg" alt="Diety">
+                <span>Diety</span>
+                <button id="dietyClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="dietyMessages" class="diety-messages"></div>
+            <div class="diety-input">
+                <input type="text" id="dietyInput" placeholder="How can I help you?">
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><i
+                        class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <div id="dietyToggle" class="diety-toggle">
+            <img src="/static/img/logo.svg" alt="Diety">
+            <div id="dietyBadge" class="diety-badge"></div>
+        </div>
+    </div>
+    <script src="/static/js/assistant_manager.js" defer></script>
+</body>
+
+</html>

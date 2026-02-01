@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DietNotify | Science-Based Nutrition Platform</title>
+    <link rel="icon" type="image/svg+xml" href="/static/img/logo.svg">
+    <meta name="description"
+        content="Master your nutrition with mathematical precision. Vegetarian, science-backed nutrition tracking and meal planning.">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media (max-width: 768px) {
+
+            .features-grid,
+            .steps-grid {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                scroll-snap-type: x mandatory;
+                gap: 20px;
+                padding: 20px 10px 40px !important;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                margin: 0;
+                justify-content: flex-start !important;
+                /* Fix for potential centering issues */
+            }
+
+            .features-grid::-webkit-scrollbar,
+            .steps-grid::-webkit-scrollbar {
+                display: none;
+            }
+
+            .feature-card,
+            .step-card {
+                flex: 0 0 calc(100% - 40px);
+                /* Slightly larger cards */
+                scroll-snap-align: start;
+                /* Snap to start for predictable initialization */
+                margin-bottom: 0 !important;
+            }
+
+            .step-arrow {
+                display: none !important;
+            }
+
+            .swiper-wrapper {
+                position: relative;
+                width: 100%;
+                overflow: visible;
+            }
+
+            .swiper-arrow {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 45px;
+                height: 45px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                border-radius: 50%;
+                display: none;
+                /* JS controlled */
+                align-items: center;
+                justify-content: center;
+                color: var(--brand-diet);
+                z-index: 100;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+                font-size: 1.2rem;
+                transition: opacity 0.3s ease;
+            }
+
+            .swiper-arrow.prev {
+                left: 0px;
+            }
+
+            .swiper-arrow.next {
+                right: 0px;
+            }
+        }
+
+        /* Desktop arrow safety */
+        @media (min-width: 769px) {
+            .swiper-arrow {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+            <a href="/index.html" class="brand-wrapper">
+                <div class="brand-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                        <defs>
+                            <linearGradient id="logo-gradient-nav-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:var(--brand-diet)" />
+                                <stop offset="100%" style="stop-color:var(--brand-yellow)" />
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#logo-gradient-nav-main)"
+                            d="M50 15C30 15 15 35 15 55C15 75 35 85 50 85C65 85 85 75 85 55C85 35 70 15 50 15ZM50 78C35 78 25 68 25 55C25 42 35 32 50 25C65 32 75 42 75 55C75 68 65 78 50 78Z" />
+                        <path fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"
+                            stroke-linejoin="round" d="M25 55H40L45 40L55 70L60 55H75" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="text-diet" style="color: var(--brand-diet);">Diet</span><span class="text-notify"
+                        style="color: var(--brand-notify);">Notify</span>
+                </div>
+            </a>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/nutrition.html">Nutrition Engine</a></li>
+                <li><a href="/diet">Scientific Protocol</a></li>
+                <li id="nav-auth-item">
+                    <a href="/login" class="btn btn-primary" style="padding: 8px 20px; border-radius: 25px;">🔐
+                        Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <script src="/static/js/navbar.js"></script>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-container">
+            <div class="hero-text animate-fade-in">
+                <div class="hero-badge-group">
+                </div>
+                <h1 class="hero-title" style="text-shadow: 0 4px 15px rgba(255,255,255,0.9);">
+                    Data-Driven <span
+                        style="color: var(--brand-diet); background: none; -webkit-text-fill-color: initial;">Nutritional
+                        Science</span><br>
+                    For a Healthier India.
+                </h1>
+                <p class="hero-subtitle" style="text-shadow: 0 2px 8px rgba(255,255,255,0.8); font-weight: 600;">
+                    An Educational Research Initiative for National Health Standards. Master nutrition with
+                    <strong style="color: var(--brand-diet);">computational precision</strong>.
+                </p>
+                <div class="hero-cta">
+                    <a href="/login" class="btn btn-primary btn-lg">
+                        <span>🔐</span> Get Started Free
+                    </a>
+                    <a href="nutrition.html" class="btn btn-outline btn-lg">
+                        <span>🔍</span> Smart Search
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-image-wrapper animate-float-slow">
+                <img src="/static/img/nutritionist.png" alt="Expert Nutritionist" class="hero-img-main">
+                <div class="floating-card info-card">
+                    <div class="icon">🧬</div>
+                    <div class="text">
+                        <strong>Bio-Analysis</strong>
+                        <span>Precise</span>
+                    </div>
+                </div>
+                <div class="floating-card stats-card">
+                    <div class="icon">📈</div>
+                    <div class="text">
+                        <strong>Tracking</strong>
+                        <span>50+ Nutrients</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge">Features</span>
+                <h2>Everything You Need for <span class="gradient-text">Precision Nutrition</span></h2>
+                <p>Built for those who take their health seriously. No fluff, just data.</p>
+            </div>
+
+            <div class="swiper-wrapper">
+                <div class="swiper-arrow prev" onclick="scrollSwiper('featuresGrid', -1)"><i
+                        class="fas fa-chevron-left"></i></div>
+                <div class="features-grid" id="featuresGrid">
+                    <!-- Feature 1 -->
+                    <div class="feature-card">
+                        <div class="feature-image">
+                            <img src="/static/img/cards/search.png" alt="Food Search">
+                        </div>
+                        <h3>Intelligent Food Search</h3>
+                        <p>Instant access to deep nutritional profiles. Search thousands of vegetarian foods with
+                            complete
+                            macro and micronutrient breakdowns.</p>
+                        <ul class="feature-list">
+                            <li>Protein, Carbs, Fats</li>
+                            <li>Vitamins & Minerals</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="feature-card featured">
+                        <div class="feature-badge">Most Popular</div>
+                        <div class="feature-image">
+                            <img src="/static/img/cards/meal.png" alt="Meal Calculator">
+                        </div>
+                        <h3>Daily Meal Calculator</h3>
+                        <p>Build your perfect meal. Add Roti, Daal, Rice, and more. See exactly what fuels your body
+                            with
+                            precision mathematics.</p>
+                        <ul class="feature-list">
+                            <li>Add Multiple Foods</li>
+                            <li>Automatic Aggregation</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="feature-card">
+                        <div class="feature-image">
+                            <img src="/static/img/cards/plant.png" alt="Plant Power">
+                        </div>
+                        <h3>Plant Power</h3>
+                        <p>A strictly vegetarian platform. We filter out the noise so you can focus on clean, green,
+                            disciplined nutrition.</p>
+                        <ul class="feature-list">
+                            <li>Veg-Only Database</li>
+                            <li>Indian Foods Included</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="swiper-arrow next" onclick="scrollSwiper('featuresGrid', 1)"><i
+                        class="fas fa-chevron-right"></i></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge badge-secondary">How It Works</span>
+                <h2>Get Started in <span class="gradient-text">3 Simple Steps</span></h2>
+            </div>
+
+            <div class="swiper-wrapper">
+                <div class="swiper-arrow prev" onclick="scrollSwiper('stepsGrid', -1)"><i
+                        class="fas fa-chevron-left"></i></div>
+                <div class="steps-grid" id="stepsGrid">
+                    <div class="step-card">
+                        <div class="step-image">
+                            <img src="/static/img/cards/step1.png" alt="Step 1">
+                        </div>
+                        <div class="step-badge">Step 01</div>
+                        <h4>Choose Your Mode</h4>
+                        <p>Select between single food search or daily meal calculator based on your needs.</p>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-card">
+                        <div class="step-image">
+                            <img src="/static/img/cards/step2.png" alt="Step 2">
+                        </div>
+                        <div class="step-badge">Step 02</div>
+                        <h4>Search & Add Foods</h4>
+                        <p>Type any food name. Our engine instantly finds matches from our 1793+ food database.</p>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-card">
+                        <div class="step-image">
+                            <img src="/static/img/cards/step3.png" alt="Step 3">
+                        </div>
+                        <div class="step-badge">Step 03</div>
+                        <h4>Analyze Results</h4>
+                        <p>View complete nutritional breakdown with major nutrients and detailed micronutrient profiles.
+                        </p>
+                    </div>
+                </div>
+                <div class="swiper-arrow next" onclick="scrollSwiper('stepsGrid', 1)"><i
+                        class="fas fa-chevron-right"></i></div>
+            </div>
+
+            <div class="cta-banner">
+                <div class="cta-content">
+                    <h3>Ready to Take Control?</h3>
+                    <p>Start tracking your nutrition with scientific precision today.</p>
+                </div>
+                <a href="nutrition.html" class="btn btn-primary btn-lg">Start Now →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="/index.html" class="brand-wrapper">
+                        <div class="brand-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                                <defs>
+                                    <linearGradient id="logo-gradient-footer" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:var(--brand-diet)" />
+                                        <stop offset="100%" style="stop-color:var(--brand-yellow)" />
+                                    </linearGradient>
+                                </defs>
+                                <path fill="url(#logo-gradient-footer)"
+                                    d="M50 15C30 15 15 35 15 55C15 75 35 85 50 85C65 85 85 75 85 55C85 35 70 15 50 15ZM50 78C35 78 25 68 25 55C25 42 35 32 50 25C65 32 75 42 75 55C75 68 65 78 50 78Z" />
+                                <path fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"
+                                    stroke-linejoin="round" d="M25 55H40L45 40L55 70L60 55H75" />
+                            </svg>
+                        </div>
+                        <div class="brand-text">
+                            <span class="text-diet">Diet</span><span class="text-notify">Notify</span>
+                        </div>
+                    </a>
+                    <p>The world's most advanced lifestyle platform for precision vegetarian nutrition. Built for
+                        discipline, powered by science.</p>
+                </div>
+                <div class="footer-links">
+                    <h5>Explore</h5>
+                    <a href="nutrition.html">Nutrition Search</a>
+                    <a href="#features">Key Features</a>
+                    <a href="/diet">Protocol Planner</a>
+                </div>
+                <div class="footer-links">
+                    <h5>Company</h5>
+                    <a href="#">About Us</a>
+                    <a href="#">Science Team</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="footer-links">
+                    <h5>Stay Disciplined</h5>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4); margin-bottom: 16px;">Get scientific
+                        nutrition tips delivered to your inbox.</p>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="email" placeholder="Email address"
+                            style="flex: 1; min-width: 0; padding: 10px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
+                        <button class="btn btn-primary" style="padding: 10px 16px;">Join</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 DietNotify. Precision Nutrition for the Elite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        function scrollSwiper(containerId, direction) {
+            const container = document.getElementById(containerId);
+            // Calculate one full card's width (card + gap)
+            const firstCard = container.querySelector('.feature-card, .step-card');
+            if (firstCard) {
+                const cardWidth = firstCard.offsetWidth + 20; // width + gap
+                container.scrollBy({ left: cardWidth * direction, behavior: 'smooth' });
+            } else {
+                const scrollAmount = container.clientWidth * 0.8 * direction;
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        function updateSwiperArrows(containerId) {
+            if (window.innerWidth > 768) return;
+
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const wrapper = container.closest('.swiper-wrapper');
+            const prevBtn = wrapper.querySelector('.swiper-arrow.prev');
+            const nextBtn = wrapper.querySelector('.swiper-arrow.next');
+
+            if (!prevBtn || !nextBtn) return;
+
+            const isScrollable = container.scrollWidth > container.clientWidth;
+            if (isScrollable) {
+                // Show/hide based on scroll position
+                const atStart = container.scrollLeft <= 5;
+                const atEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 5;
+
+                prevBtn.style.display = atStart ? 'none' : 'flex';
+                prevBtn.style.opacity = atStart ? '0' : '1';
+
+                nextBtn.style.display = atEnd ? 'none' : 'flex';
+                nextBtn.style.opacity = atEnd ? '0' : '1';
+            } else {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grids = ['featuresGrid', 'stepsGrid'];
+            grids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('scroll', () => updateSwiperArrows(id));
+
+                    // Force start at 0 (Instant)
+                    el.scrollTo({ left: 0, behavior: 'instant' });
+
+                    // Retry to ensure layout is stable
+                    requestAnimationFrame(() => {
+                        el.scrollTo({ left: 0, behavior: 'instant' });
+                        updateSwiperArrows(id);
+                    });
+
+                    // Final safety check
+                    setTimeout(() => {
+                        el.scrollTo({ left: 0, behavior: 'instant' });
+                        updateSwiperArrows(id);
+                    }, 500);
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                grids.forEach(id => updateSwiperArrows(id));
+            });
+        });
+    </script>
+    <!-- Diety AI Assistant -->
+    <div id="dietyContainer" class="diety-container">
+        <div id="dietyChatWindow" class="diety-chat-window">
+            <div class="diety-header">
+                <img src="/static/img/logo.svg" alt="Diety">
+                <span>Diety</span>
+                <button id="dietyClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="dietyMessages" class="diety-messages"></div>
+            <div class="diety-input">
+                <input type="text" id="dietyInput" placeholder="How can I help you?">
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><i
+                        class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <div id="dietyToggle" class="diety-toggle">
+            <img src="/static/img/logo.svg" alt="Diety">
+            <div id="dietyBadge" class="diety-badge"></div>
+        </div>
+    </div>
+    <script src="/static/js/assistant_manager.js" defer></script>
+</body>
+
+</html>

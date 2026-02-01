@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | DietNotify</title>
+    <link rel="icon" type="image/svg+xml" href="/static/img/logo.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        :root {
+            /* Light Theme Overrides */
+            --bg-dark: #ffffff;
+            --card-bg: #ffffff;
+            --primary: #0891b2;
+            /* Green */
+            --primary-glow: rgba(22, 163, 74, 0.2);
+            --text: #09090b;
+            /* Black */
+            --text-secondary: #52525b;
+            --border: #e4e4e7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8)),
+                url('/static/img/scientific_bg.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--primary-glow);
+            top: -200px;
+            left: -200px;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: rgba(139, 92, 246, 0.2);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(50px, 50px) scale(1.1);
+            }
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            text-align: center;
+        }
+
+        .logo-placeholder {
+            /* Replaces img logo space if needed, or remove */
+            margin-bottom: 24px;
+        }
+
+        .brand-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .brand-name span:first-child {
+            color: var(--primary);
+        }
+
+        .brand-name span:last-child {
+            background: linear-gradient(135deg, var(--primary), #4ade80);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 32px;
+        }
+
+        /* Tabs */
+        .auth-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 28px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--primary), #4ade80);
+            border: none;
+            border-radius: 14px;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 12px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .status-success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--primary);
+            display: block;
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            display: block;
+        }
+
+        .form-panel {
+            display: none;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #000;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <!-- SVG Logo would go here if uncommented -->
+            <h1 class="brand-name" style="font-size: 2.5rem; margin-bottom: 16px;">
+                <span style="color: var(--primary)">Diet</span><span
+                    style="background: none; color: #84cc16; -webkit-text-fill-color: #84cc16;">Notify</span>
+            </h1>
+            <p class="tagline">Science-based nutrition for the disciplined</p>
+
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+                <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="form-panel active" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">User ID</label>
+                    <input type="text" id="loginUserId" class="form-input" placeholder="Enter your user ID" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password"
+                        required>
+                </div>
+                <button type="submit" class="submit-btn" id="loginBtn">
+                    <span id="loginBtnText">Login</span>
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" class="form-panel" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label class="form-label">Choose a User ID</label>
+                    <input type="text" id="signupUserId" class="form-input" placeholder="e.g. john123" required
+                        minlength="3">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="signupPassword" class="form-input" placeholder="Create a password"
+                        required minlength="4">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" id="signupConfirm" class="form-input" placeholder="Confirm your password"
+                        required>
+                </div>
+                <button type="submit" class="submit-btn" id="signupBtn">
+                    <span id="signupBtnText">Create Account</span>
+                </button>
+            </form>
+
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.form-panel').forEach(panel => panel.classList.remove('active'));
+
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+            document.getElementById(tab === 'login' ? 'loginForm' : 'signupForm').classList.add('active');
+
+            document.getElementById('statusMessage').className = 'status-message';
+        }
+
+        function showStatus(type, message) {
+            const el = document.getElementById('statusMessage');
+            el.className = 'status-message status-' + type;
+            el.innerHTML = message;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+
+            const userId = document.getElementById('loginUserId').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('loginBtnText');
+
+            btn.disabled = true;
+            btnText.innerHTML = '<div class="spinner"></div>';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, password: password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus('success', '✅ Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/profile_setup.html';
+                    }, 500);
+                } else {
+                    throw new Error(data.error || 'Login failed');
+                }
+            } catch (error) {
+                showStatus('error', '❌ ' + error.message);
+                btn.disabled = false;
+                btnText.textContent = 'Login';
+            }
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+
+            const userId = document.getElementById('signupUserId').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+            const btn = document.getElementById('signupBtn');
+            const btnText = document.getElementById('signupBtnText');
+
+            if (password !== confirm) {
+                showStatus('error', '❌ Passwords do not match');
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.innerHTML = '<div class="spinner"></div>';
+
+            try {
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, password: password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus('success', '✅ Account created! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/profile_setup.html';
+                    }, 500);
+                } else {
+                    throw new Error(data.error || 'Signup failed');
+                }
+            } catch (error) {
+                showStatus('error', '❌ ' + error.message);
+                btn.disabled = false;
+                btnText.textContent = 'Create Account';
+            }
+        }
+
+        // Check if already logged in
+        (async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('force')) return; // Allow staying on login page if forced
+
+            try {
+                const response = await fetch('/api/auth/status');
+                const data = await response.json();
+
+                if (data.authenticated) {
+                    if (data.is_complete) {
+                        window.location.href = '/diet/create';
+                    } else {
+                        window.location.href = '/profile_setup.html';
+                    }
+                }
+            } catch (e) {
+                console.log('Not logged in');
+            }
+        })();
+    </script>
+    <!-- Diety AI Assistant -->
+    <div id="dietyContainer" class="diety-container">
+        <div id="dietyChatWindow" class="diety-chat-window">
+            <div class="diety-header">
+                <img src="/static/img/logo.svg" alt="Diety">
+                <span>Diety</span>
+                <button id="dietyClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="dietyMessages" class="diety-messages"></div>
+            <div class="diety-input">
+                <input type="text" id="dietyInput" placeholder="How can I help you?">
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><i
+                        class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <div id="dietyToggle" class="diety-toggle">
+            <img src="/static/img/logo.svg" alt="Diety">
+            <div id="dietyBadge" class="diety-badge"></div>
+        </div>
+    </div>
+    <script src="/static/js/assistant_manager.js" defer></script>
+</body>
+
+</html>
