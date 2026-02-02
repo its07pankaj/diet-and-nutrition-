@@ -35,8 +35,18 @@ except ImportError:
 
 # Path to service account key file
 # Path to service account key file
-# Default to local folder, but allow override via env var (crucial for Render /etc/secrets/)
-FIREBASE_KEY_PATH = os.getenv('FIREBASE_KEY_PATH', os.path.join(os.path.dirname(__file__), 'firebase-admin-key.json'))
+# Robust check: 1. Env Var, 2. Render Secret Path, 3. Local Dev Path
+possible_paths = [
+    os.getenv('FIREBASE_KEY_PATH'),
+    '/etc/secrets/firebase-admin-key.json',
+    os.path.join(os.path.dirname(__file__), 'firebase-admin-key.json')
+]
+FIREBASE_KEY_PATH = next((p for p in possible_paths if p and os.path.exists(p)), None)
+
+if not FIREBASE_KEY_PATH:
+    print("[Firebase] WARNING: Service account key not found in any standard location!")
+else:
+    print(f"[Firebase] Loaded key from: {FIREBASE_KEY_PATH}")
 
 # Firebase Web Config (for frontend)
 FIREBASE_WEB_CONFIG = {

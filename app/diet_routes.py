@@ -11,6 +11,11 @@ diet_bp = Blueprint('diet', __name__)
 
 # Initialize AI Service
 API_KEY = os.getenv('GEMINI_API_KEY', '').split(',')[0]
+if not API_KEY:
+    print("[DietRoutes] CRITICAL WARNING: No GEMINI_API_KEY found in environment!")
+else:
+    print(f"[DietRoutes] Loaded API Key: {API_KEY[:4]}...{API_KEY[-4:]}")
+
 ai_service = DietAI(api_key=API_KEY)
 
 

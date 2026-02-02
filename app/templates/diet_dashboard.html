@@ -1522,6 +1522,28 @@
                 gap: 10px;
             }
         }
+
+        /* MAP UI FIX FOR MOBILE */
+        @media (max-width: 768px) {
+            .map-floating-panel {
+                position: absolute !important;
+                top: auto !important;
+                bottom: 20px !important;
+                left: 15px !important;
+                right: 15px !important;
+                width: auto !important;
+                max-height: 40vh !important;
+                transform: none !important;
+                border: 1px solid var(--glass-border);
+                box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+            }
+
+            .expert-list-mini {
+                max-height: 30vh !important;
+                overflow-y: auto !important;
+            }
+        }
     </style>
 </head>
 
