@@ -28,6 +28,10 @@ def nutrition():
 def about():
     return render_template('about.html')
 
+@main_bp.route('/healthz')
+def health_check():
+    return jsonify({"status": "healthy"}), 200
+
 
 
 # Static asset route is handled automatically by Flask for 'static' folder
