@@ -34,7 +34,9 @@ except ImportError:
     messaging = None
 
 # Path to service account key file
-FIREBASE_KEY_PATH = os.path.join(os.path.dirname(__file__), 'firebase-admin-key.json')
+# Path to service account key file
+# Default to local folder, but allow override via env var (crucial for Render /etc/secrets/)
+FIREBASE_KEY_PATH = os.getenv('FIREBASE_KEY_PATH', os.path.join(os.path.dirname(__file__), 'firebase-admin-key.json'))
 
 # Firebase Web Config (for frontend)
 FIREBASE_WEB_CONFIG = {
