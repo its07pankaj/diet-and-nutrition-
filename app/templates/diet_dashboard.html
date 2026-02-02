@@ -1385,6 +1385,60 @@
             background: rgba(22, 163, 74, 0.1);
         }
 
+        /* USER LOCATION MARKER (PULSING DOT) */
+        .user-marker-pulse {
+            width: 20px;
+            height: 20px;
+            background-color: #0ea5e9;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+            animation: pulse-ring 2s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(14, 165, 233, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+            }
+        }
+
+        /* LOCATE ME BUTTON */
+        .map-locate-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #ffffff;
+            color: var(--accent-primary);
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .map-locate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            background: var(--accent-primary);
+            color: #ffffff;
+        }
+
         /* FIXED NOTIFICATION TOGGLE FOR NARROW SIDEBAR */
         .notification-toggle-wrapper {
             width: 100%;
@@ -1523,64 +1577,49 @@
             }
         }
 
-        /* MAP UI FIX FOR MOBILE - Side Docked & Collapsible */
+        /* MAP UI FIX FOR MOBILE - Clean Bottom Sheet */
         @media (max-width: 768px) {
             .map-floating-panel {
                 position: absolute !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
                 top: auto !important;
-                bottom: 80px !important;
-                /* Move up to avoid overlap */
-                left: auto !important;
-                right: 15px !important;
-                width: 220px !important;
-                /* Fixed narrow width */
-                max-height: 45vh !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: 40vh !important;
+                border-radius: 20px 20px 0 0 !important;
                 transform: none !important;
-                border: 1px solid var(--glass-border);
-                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+                border-top: 1px solid var(--glass-border);
+                box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
                 z-index: 100;
-                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             }
 
-            /* Collapsed State */
             .map-floating-panel.collapsed {
-                max-height: 50px !important;
-                overflow: hidden;
-                width: 160px !important;
-            }
-
-            .map-floating-panel .panel-header {
-                cursor: pointer;
-                /* Tap to toggle */
-                justify-content: space-between;
-            }
-
-            /* Add chevron indicator */
-            .map-floating-panel .panel-header::after {
-                content: '\f078';
-                /* fa-chevron-down */
-                font-family: 'Font Awesome 5 Free';
-                font-weight: 900;
-                font-size: 0.8rem;
-                transition: transform 0.3s;
-            }
-
-            .map-floating-panel.collapsed .panel-header::after {
-                transform: rotate(180deg);
+                transform: translateY(calc(100% - 60px)) !important;
             }
 
             .expert-list-mini {
-                max-height: 35vh !important;
+                max-height: 30vh !important;
                 overflow-y: auto !important;
+                padding-bottom: 20px;
             }
 
-            /* Ensure Locate Button is Visible */
+            /* Ensure Locate Button is Visible & Positioned correctly */
             .map-locate-btn {
-                bottom: 140px !important;
-                /* Move up above the collapsed panel */
-                right: 15px !important;
+                bottom: 35vh !important;
+                /* Position just above the panel when open */
+                right: 20px !important;
                 z-index: 101 !important;
-                /* Above panel */
+                transition: bottom 0.3s ease;
+            }
+
+            .map-floating-panel.collapsed~.map-locate-btn {
+                bottom: 80px !important;
+                /* Move down when panel is collapsed */
             }
         }
     </style>
@@ -2033,7 +2072,7 @@
                 </div>
 
                 <!-- Info Panel (Floating) -->
-                <div class="map-floating-panel" id="mapFloatingPanel">
+                <div class="map-floating-panel collapsed" id="mapFloatingPanel">
                     <div class="panel-header"
                         onclick="document.getElementById('mapFloatingPanel').classList.toggle('collapsed')">
                         <div style="display: flex; align-items: center; gap: 8px;">
