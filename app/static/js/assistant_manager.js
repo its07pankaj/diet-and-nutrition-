@@ -177,69 +177,54 @@ class DietyAssistant {
                     if (!this.isOpen) return;
                     const vv = window.visualViewport;
 
-                    // Make container cover EXACTLY the visible viewport - no extra space
+                    // 1. Resize container to EXACT visible height
+                    // This forces the bottom of the container to be above the keyboard
                     container.style.position = 'fixed';
-                    container.style.top = '0';
                     container.style.left = '0';
                     container.style.width = '100%';
-                    container.style.height = `${vv.height}px`; // Use vv.height, not 100vh
+                    container.style.height = `${vv.height}px`;
+                    container.style.top = `${vv.offsetTop}px`; // Follow viewport scroll
                     container.style.zIndex = '2147483647';
-                    container.style.overflow = 'hidden'; // No scroll on container
+                    container.style.overflow = 'hidden';
 
-                    // Chat window fills container - THIS IS THE BACKGROUND LAYER
-                    chatWindow.style.position = 'fixed';
+                    // 2. Chat Window fills container
+                    // Flexbox takes care of the children (Header, Messages, Input)
+                    chatWindow.style.position = 'absolute';
                     chatWindow.style.top = '0';
                     chatWindow.style.left = '0';
                     chatWindow.style.width = '100%';
-                    chatWindow.style.height = `${vv.height}px`;
+                    chatWindow.style.height = '100%';
+                    chatWindow.style.borderRadius = '0';
+
+                    // IMPORTANT: Flex layout handles component spacing automatically
+                    // Input stays at bottom, messages take remaining space
                     chatWindow.style.display = 'flex';
                     chatWindow.style.flexDirection = 'column';
-                    // UNIFIED STATIONARY BACKGROUND
-                    chatWindow.style.backgroundColor = 'rgba(236, 254, 255, 0.98)';
-                    chatWindow.style.backgroundImage = 'url("/static/img/diety_bg.png")';
-                    chatWindow.style.backgroundSize = 'cover';
-                    chatWindow.style.backgroundPosition = 'center';
-                    chatWindow.style.backgroundRepeat = 'no-repeat';
-                    chatWindow.style.backgroundAttachment = 'fixed';
 
-                    // Header at top - FIXED to screen
+                    // 3. Reset children to natural flex flow (remove fixed hacks)
                     if (header) {
-                        header.style.position = 'fixed';
-                        header.style.top = '0';
-                        header.style.left = '0';
+                        header.style.position = 'relative';
                         header.style.width = '100%';
-                        header.style.zIndex = '1000';
                         header.style.flexShrink = '0';
                     }
 
-                    // Input at bottom of visual viewport - ABOVE keyboard
-                    if (inputArea) {
-                        inputArea.style.position = 'fixed';
-                        inputArea.style.bottom = `${window.innerHeight - vv.height}px`;
-                        inputArea.style.left = '0';
-                        inputArea.style.width = '100%';
-                        inputArea.style.zIndex = '999';
-                        inputArea.style.flexShrink = '0';
+                    if (messages) {
+                        messages.style.position = 'relative';
+                        messages.style.width = '100%';
+                        messages.style.flex = '1'; /* Take all available space */
+                        messages.style.height = 'auto';
+                        messages.style.top = '0';
+                        messages.style.overflowY = 'auto'; // Internal scroll
+
+                        // Auto-scroll to keep latest message visible
+                        this.scrollToBottom();
                     }
 
-                    // Messages between header and input - TRANSPARENT TOP LAYER
-                    if (messages && header && inputArea) {
-                        const headerHeight = header.offsetHeight || 60;
-                        const inputHeight = inputArea.offsetHeight || 70;
-                        messages.style.position = 'fixed';
-                        messages.style.top = `${headerHeight}px`;
-                        messages.style.left = '0';
-                        messages.style.width = '100%';
-                        messages.style.height = `${vv.height - headerHeight - inputHeight}px`;
-                        messages.style.overflowY = 'auto';
-                        messages.style.zIndex = '100';
-
-                        // TRANSPARENT - shows chatWindow background through
-                        messages.style.background = 'transparent';
-
-                        // Auto-scroll to bottom
-                        // Auto-scroll to bottom
-                        this.scrollToBottom();
+                    if (inputArea) {
+                        inputArea.style.position = 'relative';
+                        inputArea.style.width = '100%';
+                        inputArea.style.bottom = 'auto';
+                        inputArea.style.flexShrink = '0';
                     }
                 };
 
@@ -247,17 +232,18 @@ class DietyAssistant {
                 window.visualViewport.addEventListener('resize', handler);
                 window.visualViewport.addEventListener('scroll', handler);
 
-                // Run after a small delay to let elements render
-                setTimeout(handler, 50);
-                setTimeout(() => this.chatInput.focus(), 100);
+                // Run immediately
+                setTimeout(handler, 10);
+                setTimeout(() => this.chatInput.focus(), 150);
             }
         } else {
+            // Cleanup on close
             document.body.style.overflow = '';
             document.body.style.position = '';
             document.body.style.width = '';
             document.body.style.height = '';
 
-            // Reset ALL styles
+            // Reset styles
             container.style.cssText = '';
             chatWindow.style.cssText = '';
             if (header) header.style.cssText = '';

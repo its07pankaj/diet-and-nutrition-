@@ -1,4 +1,9 @@
-# DietNotify - Ignore patterns
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+firebase-admin-key.json
+app/core/firebase-admin-key.json
 
 # Python
 __pycache__/
@@ -6,27 +11,48 @@ __pycache__/
 *$py.class
 *.so
 .Python
-.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 venv/
 ENV/
-
-# Firebase credentials - NEVER COMMIT
-app/core/firebase-admin-key.json
-firebase-admin-key.json
-*.json.bak
+env/
+.venv/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# Local data
-data/users/
-*.log
-logs/
-.env
+*~
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+*.cache
+
+# Node (if any)
+node_modules/
+
+# Temporary files
+tmp/
+temp/

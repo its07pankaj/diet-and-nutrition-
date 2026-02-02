@@ -135,9 +135,12 @@
                 <li><a href="/index.html">Home</a></li>
                 <li><a href="/nutrition.html">Nutrition Engine</a></li>
                 <li><a href="/diet">Scientific Protocol</a></li>
+                <li><a href="/about">About</a></li>
+
                 <li id="nav-auth-item">
-                    <a href="/login" class="btn btn-primary" style="padding: 8px 20px; border-radius: 25px;">🔐
-                        Login</a>
+                    <a href="/login" class="btn btn-primary" style="padding: 8px 20px; border-radius: 25px;"><i
+                            class="fas fa-lock"></i>
+                        <span>Login</span></a>
                 </li>
             </ul>
         </div>
@@ -151,21 +154,19 @@
                 <div class="hero-badge-group">
                 </div>
                 <h1 class="hero-title" style="text-shadow: 0 4px 15px rgba(255,255,255,0.9);">
-                    Data-Driven <span
-                        style="color: var(--brand-diet); background: none; -webkit-text-fill-color: initial;">Nutritional
-                        Science</span><br>
+                    Data-Driven Nutritional Science<br>
                     For a Healthier India.
                 </h1>
                 <p class="hero-subtitle" style="text-shadow: 0 2px 8px rgba(255,255,255,0.8); font-weight: 600;">
                     An Educational Research Initiative for National Health Standards. Master nutrition with
-                    <strong style="color: var(--brand-diet);">computational precision</strong>.
+                    computational precision.
                 </p>
                 <div class="hero-cta">
                     <a href="/login" class="btn btn-primary btn-lg">
-                        <span>🔐</span> Get Started Free
+                        <span><i class="fas fa-lock"></i></span> <span>Get Started Free</span>
                     </a>
                     <a href="nutrition.html" class="btn btn-outline btn-lg">
-                        <span>🔍</span> Smart Search
+                        <span><i class="fas fa-search"></i></span> <span>Smart Search</span>
                     </a>
                 </div>
             </div>
@@ -173,14 +174,14 @@
             <div class="hero-image-wrapper animate-float-slow">
                 <img src="/static/img/nutritionist.png" alt="Expert Nutritionist" class="hero-img-main">
                 <div class="floating-card info-card">
-                    <div class="icon">🧬</div>
+                    <div class="icon"><i class="fas fa-dna"></i></div>
                     <div class="text">
                         <strong>Bio-Analysis</strong>
                         <span>Precise</span>
                     </div>
                 </div>
                 <div class="floating-card stats-card">
-                    <div class="icon">📈</div>
+                    <div class="icon"><i class="fas fa-chart-line"></i></div>
                     <div class="text">
                         <strong>Tracking</strong>
                         <span>50+ Nutrients</span>
@@ -195,7 +196,7 @@
         <div class="container">
             <div class="section-header">
                 <span class="badge">Features</span>
-                <h2>Everything You Need for <span class="gradient-text">Precision Nutrition</span></h2>
+                <h2>Everything You Need for Precision Nutrition</h2>
                 <p>Built for those who take their health seriously. No fluff, just data.</p>
             </div>
 
@@ -303,7 +304,7 @@
                     <h3>Ready to Take Control?</h3>
                     <p>Start tracking your nutrition with scientific precision today.</p>
                 </div>
-                <a href="nutrition.html" class="btn btn-primary btn-lg">Start Now →</a>
+                <a href="nutrition.html" class="btn btn-primary btn-lg">Start Now <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
@@ -348,13 +349,26 @@
                     <a href="#">Contact</a>
                 </div>
                 <div class="footer-links">
-                    <h5>Stay Disciplined</h5>
-                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4); margin-bottom: 16px;">Get scientific
-                        nutrition tips delivered to your inbox.</p>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="email" placeholder="Email address"
-                            style="flex: 1; min-width: 0; padding: 10px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
-                        <button class="btn btn-primary" style="padding: 10px 16px;">Join</button>
+                    <h5>Ask a Query</h5>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4); margin-bottom: 16px;">
+                        Have a specific nutritional question? Ask our science team directly.
+                    </p>
+                    <div id="askFormContainer">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <input type="email" id="askEmail" placeholder="Your Email Address"
+                                style="width: 100%; padding: 10px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white;">
+                            <textarea id="askQuery" placeholder="Your Query (Max 30 words)..." rows="4"
+                                style="width: 100%; padding: 10px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: white; resize: none; font-family: inherit; font-size: 0.9rem;"></textarea>
+                            <div id="wordCountDisplay"
+                                style="font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: right;">0 / 30
+                                words
+                            </div>
+                            <button id="askSubmitBtn" class="btn btn-primary" style="padding: 10px 16px; width: 100%;">
+                                <span id="askBtnText">Ask Now</span>
+                                <i id="askBtnIcon" class="fas fa-paper-plane" style="margin-left: 8px;"></i>
+                            </button>
+                        </div>
+                        <div id="askStatusMessage" style="margin-top: 10px; font-size: 0.85rem; display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -434,6 +448,90 @@
             window.addEventListener('resize', () => {
                 grids.forEach(id => updateSwiperArrows(id));
             });
+
+            // --- Ask a Query Logic ---
+            const askEmail = document.getElementById('askEmail');
+            const askQuery = document.getElementById('askQuery');
+            const askSubmitBtn = document.getElementById('askSubmitBtn');
+            const askStatusMessage = document.getElementById('askStatusMessage');
+            const wordCountDisplay = document.getElementById('wordCountDisplay');
+            const askBtnText = document.getElementById('askBtnText');
+            const askBtnIcon = document.getElementById('askBtnIcon');
+
+            function getWordCount(str) {
+                return str.trim().split(/\s+/).filter(word => word.length > 0).length;
+            }
+
+            if (askQuery) {
+                askQuery.addEventListener('input', () => {
+                    const count = getWordCount(askQuery.value);
+                    wordCountDisplay.textContent = `${count} / 30 words`;
+                    wordCountDisplay.style.color = count > 30 ? '#ef4444' : 'rgba(100,255,100,0.6)';
+                });
+            }
+
+            if (askSubmitBtn) {
+                askSubmitBtn.addEventListener('click', async () => {
+                    const email = askEmail.value.trim();
+                    const query = askQuery.value.trim();
+                    const wordCount = getWordCount(query);
+
+                    // Basic validation
+                    if (!email || !email.includes('@')) {
+                        showStatus('Please enter a valid email address.', 'error');
+                        return;
+                    }
+                    if (wordCount < 1) {
+                        showStatus('Please enter your query.', 'error');
+                        return;
+                    }
+                    if (wordCount > 30) {
+                        showStatus(`Query is too long. Max 30 words (you have ${wordCount}).`, 'error');
+                        return;
+                    }
+
+                    // Disable button
+                    askSubmitBtn.disabled = true;
+                    askBtnText.textContent = 'Sending...';
+                    askBtnIcon.className = 'fas fa-spinner fa-spin';
+
+                    try {
+                        const response = await fetch('/api/ask', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, query })
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            showStatus(result.message, 'success');
+                            askEmail.value = '';
+                            askQuery.value = '';
+                            wordCountDisplay.textContent = '0 / 30 words';
+                        } else {
+                            showStatus(result.message || 'Something went wrong.', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Ask Query Error:', error);
+                        showStatus('Network error. Please try again.', 'error');
+                    } finally {
+                        askSubmitBtn.disabled = false;
+                        askBtnText.textContent = 'Ask Now';
+                        askBtnIcon.className = 'fas fa-paper-plane';
+                    }
+                });
+            }
+
+            function showStatus(msg, type) {
+                askStatusMessage.textContent = msg;
+                askStatusMessage.style.display = 'block';
+                askStatusMessage.style.color = type === 'success' ? '#84cc16' : '#ef4444';
+                setTimeout(() => {
+                    askStatusMessage.style.fadeOut = 'slow';
+                    // We'll just leave it for now or hide after 5s
+                }, 5000);
+            }
         });
     </script>
     <!-- Diety AI Assistant -->
@@ -442,13 +540,24 @@
             <div class="diety-header">
                 <img src="/static/img/logo.svg" alt="Diety">
                 <span>Diety</span>
-                <button id="dietyClose"><i class="fas fa-times"></i></button>
+                <button id="dietyClose">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
             <div id="dietyMessages" class="diety-messages"></div>
             <div class="diety-input">
                 <input type="text" id="dietyInput" placeholder="How can I help you?">
-                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><i
-                        class="fas fa-paper-plane"></i></button>
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
             </div>
         </div>
         <div id="dietyToggle" class="diety-toggle">

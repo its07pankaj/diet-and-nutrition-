@@ -576,9 +576,12 @@
                 <li><a href="/index.html">Home</a></li>
                 <li><a href="/nutrition.html">Nutrition Engine</a></li>
                 <li><a href="/diet">Scientific Protocol</a></li>
+                <li><a href="/about">About</a></li>
+
                 <li id="nav-auth-item">
-                    <a href="/login" class="btn btn-primary" style="padding: 8px 20px; border-radius: 25px;">🔐
-                        Login</a>
+                    <a href="/login" class="btn btn-primary" style="padding: 8px 20px; border-radius: 25px;"><i
+                            class="fas fa-lock"></i>
+                        <span>Login</span></a>
                 </li>
             </ul>
         </div>
@@ -638,7 +641,7 @@
             <!-- STEP 1: Basic Info -->
             <div class="step-card active" id="step1">
                 <div class="step-header">
-                    <h2 class="step-title">📋 Basic Information</h2>
+                    <h2 class="step-title"><i class="fas fa-clipboard-list"></i> Basic Information</h2>
                     <p class="step-description">Let's start with your fundamental metrics</p>
                 </div>
 
@@ -681,14 +684,15 @@
                 </div>
 
                 <div class="btn-row">
-                    <button type="button" class="btn btn-next" onclick="nextStep(1)">Next Step →</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(1)">Next Step <i
+                            class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
 
             <!-- STEP 2: Lifestyle -->
             <div class="step-card" id="step2">
                 <div class="step-header">
-                    <h2 class="step-title">🏃 Lifestyle & Activity</h2>
+                    <h2 class="step-title"><i class="fas fa-running"></i> Lifestyle & Activity</h2>
                     <p class="step-description">Your daily activity affects calorie needs</p>
                 </div>
 
@@ -769,14 +773,15 @@
 
                 <div class="btn-row">
                     <button type="button" class="btn btn-back" onclick="prevStep(2)">← Back</button>
-                    <button type="button" class="btn btn-next" onclick="nextStep(2)">Next Step →</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(2)">Next Step <i
+                            class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
 
             <!-- STEP 3: Health -->
             <div class="step-card" id="step3">
                 <div class="step-header">
-                    <h2 class="step-title">🏥 Health Conditions</h2>
+                    <h2 class="step-title"><i class="fas fa-hospital"></i> Health Conditions</h2>
                     <p class="step-description">This helps us customize safe recommendations</p>
                 </div>
 
@@ -824,14 +829,15 @@
 
                 <div class="btn-row">
                     <button type="button" class="btn btn-back" onclick="prevStep(3)">← Back</button>
-                    <button type="button" class="btn btn-next" onclick="nextStep(3)">Next Step →</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(3)">Next Step <i
+                            class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
 
             <!-- STEP 4: Food Preferences -->
             <div class="step-card" id="step4">
                 <div class="step-header">
-                    <h2 class="step-title">🍽️ Food Preferences</h2>
+                    <h2 class="step-title"><i class="fas fa-utensils"></i> Food Preferences</h2>
                     <p class="step-description">Your taste matters for sustainable diet plans</p>
                 </div>
 
@@ -918,14 +924,15 @@
 
                 <div class="btn-row">
                     <button type="button" class="btn btn-back" onclick="prevStep(4)">← Back</button>
-                    <button type="button" class="btn btn-next" onclick="nextStep(4)">Next Step →</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(4)">Next Step <i
+                            class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
 
             <!-- STEP 5: Goals -->
             <div class="step-card" id="step5">
                 <div class="step-header">
-                    <h2 class="step-title">🎯 Your Goals</h2>
+                    <h2 class="step-title"><i class="fas fa-bullseye"></i> Your Goals</h2>
                     <p class="step-description">What do you want to achieve?</p>
                 </div>
 
@@ -981,14 +988,15 @@
 
                 <div class="btn-row">
                     <button type="button" class="btn btn-back" onclick="prevStep(5)">← Back</button>
-                    <button type="button" class="btn btn-next" onclick="nextStep(5)">Review Profile →</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(5)">Review Profile <i
+                            class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
 
             <!-- STEP 6: Review & Confirm (The "Details Page") -->
             <div class="step-card" id="step6">
                 <div class="step-header">
-                    <h2 class="step-title">📋 Profile Summary</h2>
+                    <h2 class="step-title"><i class="fas fa-clipboard-check"></i> Profile Summary</h2>
                     <p class="step-description">Verify your scientific profile details before we proceed</p>
                 </div>
 
@@ -1025,7 +1033,7 @@
                     <button type="button" class="btn btn-back" onclick="prevStep(6)">← Edit Data</button>
                     <button type="button" class="btn btn-submit" onclick="submitProfile()"
                         style="width: auto; padding: 14px 40px;">
-                        🎯 Confirm & Initialize Scientific Analysis
+                        <i class="fas fa-bullseye"></i> Confirm & Initialize Scientific Analysis
                     </button>
                 </div>
             </div>
@@ -1078,14 +1086,16 @@
                     return;
                 }
 
-                if (data.is_complete) {
-                    window.location.href = '/diet/create';
-                    return;
-                }
-
                 if (data.profile) {
                     profileData = data.profile;
-                    currentStep = data.current_step || 1;
+
+                    // If profile is complete, allow editing by showing step 1
+                    // Otherwise, continue from where they left off
+                    if (data.is_complete) {
+                        currentStep = 1; // Start from beginning for editing
+                    } else {
+                        currentStep = data.current_step || 1;
+                    }
 
                     // Populate form fields
                     populateFields(profileData);
@@ -1097,6 +1107,7 @@
                 console.log('Could not load profile:', e);
             }
         }
+
 
         // Populate form fields with saved data
         function populateFields(data) {
@@ -1394,13 +1405,22 @@
             <div class="diety-header">
                 <img src="/static/img/logo.svg" alt="Diety">
                 <span>Diety</span>
-                <button id="dietyClose"><i class="fas fa-times"></i></button>
+                <button id="dietyClose"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
             </div>
             <div id="dietyMessages" class="diety-messages"></div>
             <div class="diety-input">
                 <input type="text" id="dietyInput" placeholder="How can I help you?">
-                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><i
-                        class="fas fa-paper-plane"></i></button>
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg></button>
             </div>
         </div>
         <div id="dietyToggle" class="diety-toggle">

@@ -393,8 +393,8 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            padding: 40px 60px 100px;
-            /* Added bottom padding */
+            padding: 40px 60px 180px;
+            /* Extra bottom padding for mobile nav */
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -499,11 +499,33 @@
             color: var(--accent-primary);
         }
 
+        .profile-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(132, 204, 22, 0.3);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-avatar svg,
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .profile-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 15px;
         }
+
 
         .profile-stat {
             text-align: center;
@@ -906,6 +928,45 @@
             text-decoration: none;
         }
 
+        /* Tablet breakpoint */
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 30px 25px 100px;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .mobile-header {
+                display: flex !important;
+            }
+
+            .container-form {
+                padding: 40px 30px;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .profile-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .duration-options {
+                gap: 10px;
+            }
+
+            .duration-label {
+                padding: 14px 10px;
+                font-size: 0.9rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .navbar .container {
                 padding: 0 20px;
@@ -930,6 +991,72 @@
 
             .profile-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* MOBILE OPTIMIZATIONS (Small Screens) */
+        @media (max-width: 480px) {
+            .container-form {
+                padding: 20px 12px 120px !important;
+                /* Full width feel */
+            }
+
+            .main-content {
+                margin-top: 80px !important;
+                /* Reduce gap */
+            }
+
+            .hero-title {
+                font-size: 1.7rem !important;
+                line-height: 1.2;
+            }
+
+            .page-subtitle {
+                font-size: 0.95rem !important;
+                margin-bottom: 25px !important;
+            }
+
+            .profile-summary {
+                padding: 15px !important;
+                margin-bottom: 25px !important;
+                border-radius: 16px !important;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .edit-profile-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* Profile Grid Adjustments */
+            .profile-grid {
+                gap: 10px !important;
+            }
+
+            .btn-generate {
+                padding: 16px !important;
+                font-size: 1.1rem !important;
+            }
+
+            /* Saved Plans Full Width */
+            .saved-plans-section {
+                padding: 15px !important;
+                margin-top: 30px !important;
+                border-radius: 16px !important;
+            }
+
+            .plan-item {
+                padding: 12px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .plan-details h4 {
+                font-size: 0.95rem !important;
             }
         }
     </style>
@@ -1006,6 +1133,10 @@
                     <span class="nav-icon"><i class="fas fa-chart-pie"></i></span>
                     <span>Dashboard</span>
                 </a></li>
+            <li><a class="nav-link" href="/about">
+                    <span class="nav-icon"><i class="fas fa-info-circle"></i></span>
+                    <span>About</span>
+                </a></li>
             <li><a class="nav-link active" href="/diet/create">
                     <span class="nav-icon"><i class="fas fa-plus"></i></span>
                     <span>Create New Plan</span>
@@ -1014,8 +1145,8 @@
                     <span class="nav-icon"><i class="fas fa-user-edit"></i></span>
                     <span>Update Profile</span>
                 </a></li>
-            <li><a class="nav-link" onclick="logout()"
-                    style="color: var(--accent-red); opacity: 0.8; margin-top: auto;">
+
+            <li><a class="nav-link" onclick="logout()" style="color: var(--error); opacity: 0.8; margin-top: auto;">
                     <span class="nav-icon"><i class="fas fa-sign-out-alt"></i></span>
                     <span>Logout</span>
                 </a></li>
@@ -1100,7 +1231,18 @@
                     <div class="profile-summary animate-card" id="profileSummary"
                         style="display: none; animation-delay: 0.3s;">
                         <div class="profile-header">
-                            <h3><i class="fas fa-user-check"></i> Your Bio-Profile</h3>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div id="profileAvatar" class="profile-avatar">
+                                    <!-- Avatar SVG will be injected by JS based on gender -->
+                                </div>
+                                <div>
+                                    <h3 style="margin: 0; font-size: 1.3rem;"><i class="fas fa-user-check"></i> Your
+                                        Bio-Profile</h3>
+                                    <p id="profileSubtitle"
+                                        style="margin: 4px 0 0; font-size: 0.9rem; color: var(--text-secondary);">
+                                        Personalized nutrition data</p>
+                                </div>
+                            </div>
                             <a href="/profile_setup.html" class="edit-profile-btn">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
@@ -1117,15 +1259,15 @@
                             <div class="duration-options">
                                 <label class="duration-option">
                                     <input type="radio" name="duration" value="daily" checked>
-                                    <span class="duration-label">⚡ Daily</span>
+                                    <span class="duration-label"><i class="fas fa-bolt"></i> Daily</span>
                                 </label>
                                 <label class="duration-option">
                                     <input type="radio" name="duration" value="weekly">
-                                    <span class="duration-label">📅 Weekly</span>
+                                    <span class="duration-label"><i class="fas fa-calendar-week"></i> Weekly</span>
                                 </label>
                                 <label class="duration-option">
                                     <input type="radio" name="duration" value="monthly">
-                                    <span class="duration-label">🗓️ Monthly</span>
+                                    <span class="duration-label"><i class="fas fa-calendar-alt"></i> Monthly</span>
                                 </label>
                             </div>
                         </div>
@@ -1133,7 +1275,8 @@
                         <button type="button" class="btn-generate" id="generateBtn" onclick="generatePlan()">
                             Generate Comprehensive Nutritional Protocol <i class="fas fa-wand-magic-sparkles"></i>
                         </button>
-                        <p class="science-note">🧬 Analysis Engine will process your complete bio-profile to engineer
+                        <p class="science-note"><i class="fas fa-dna"></i> Analysis Engine will process your complete
+                            bio-profile to engineer
                             your perfect
                             fuel.
                         </p>
@@ -1218,6 +1361,22 @@
             const grid = document.getElementById('profileGrid');
             if (!grid) return;
 
+            // Gender-specific avatar images
+            const maleAvatar = `<img src="/static/images/male_avatar.png" alt="Male Avatar">`;
+            const femaleAvatar = `<img src="/static/images/female_avatar.png" alt="Female Avatar">`;
+
+            // Set avatar based on gender
+            const avatarEl = document.getElementById('profileAvatar');
+            if (avatarEl) {
+                avatarEl.innerHTML = profile.gender === 'Female' ? femaleAvatar : maleAvatar;
+            }
+
+            // Update subtitle with name
+            const subtitleEl = document.getElementById('profileSubtitle');
+            if (subtitleEl && profile.name) {
+                subtitleEl.textContent = `Welcome back, ${profile.name.split(' ')[0]}!`;
+            }
+
             const stats = [
                 { value: profile.name || profile.user_id || 'User', label: 'Name' },
                 { value: `${profile.age || '-'} yrs`, label: 'Age' },
@@ -1240,6 +1399,7 @@
                 userNameEl.textContent = profile.name.split(' ')[0];
             }
         }
+
 
         function toggleMobileSidebar() {
             const sidebar = document.querySelector('.sidebar');
@@ -1277,7 +1437,11 @@
                                         <span>Created ${date}</span>
                                     </div>
                                 </div>
-                                ${isActive ? '<span class="active-badge">ACTIVE</span>' : ''}
+                                <div class="plan-actions" style="display: flex; gap: 8px; align-items: center;">
+                                    ${isActive ? '<span class="active-badge">ACTIVE</span>' :
+                                `<button class="edit-profile-btn" onclick="activatePlan(event, '${planId}')" style="padding: 4px 10px;">Activate</button>`}
+                                    <button class="edit-profile-btn" onclick="viewPlan('${planId}')" style="padding: 4px 10px;">View</button>
+                                </div>
                             </div>
                         `;
                     }).join('');
@@ -1340,22 +1504,47 @@
             }
         }
 
+        async function activatePlan(event, planId) {
+            if (event) event.stopPropagation();
+            try {
+                const response = await fetch(`/api/diet/set_active/${planId}`, { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Failed to activate plan: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Activate plan error:', error);
+            }
+        }
+
         // Initialize on load
         init();
     </script>
+
     <!-- Diety AI Assistant -->
     <div id="dietyContainer" class="diety-container">
         <div id="dietyChatWindow" class="diety-chat-window">
             <div class="diety-header">
                 <img src="/static/img/logo.svg" alt="Diety">
                 <span>Diety</span>
-                <button id="dietyClose"><i class="fas fa-times"></i></button>
+                <button id="dietyClose"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
             </div>
             <div id="dietyMessages" class="diety-messages"></div>
             <div class="diety-input">
                 <input type="text" id="dietyInput" placeholder="How can I help you?">
-                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><i
-                        class="fas fa-paper-plane"></i></button>
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg></button>
             </div>
         </div>
         <div id="dietyToggle" class="diety-toggle">
@@ -1363,6 +1552,7 @@
             <div id="dietyBadge" class="diety-badge"></div>
         </div>
     </div>
+
     <script src="/static/js/assistant_manager.js" defer></script>
 </body>
 

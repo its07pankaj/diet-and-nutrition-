@@ -193,7 +193,6 @@ def get_notification_preferences(user_id: str) -> dict:
             prefs = response.json()
             return prefs[0] if prefs else None
         return None
-        return None
     except Exception as e:
         print(f"[NotificationDB] Get preferences error: {e}")
         return None

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | DietNotify</title>
+    <link rel="icon" type="image/svg+xml" href="/static/img/logo.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        :root {
+            --brand-diet: #16a34a;
+            --brand-yellow: #facc15;
+            --brand-notify: #0891b2;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f8fafc;
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Hero Background */
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.08), rgba(8, 145, 178, 0.08)),
+                url('/static/img/about_hero_bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 120px 20px 80px;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(248, 250, 252, 0.3), rgba(248, 250, 252, 0.95));
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(22, 163, 74, 0.1);
+            border: 1px solid rgba(22, 163, 74, 0.2);
+            color: var(--brand-diet);
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .hero-title {
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            letter-spacing: -3px;
+        }
+
+        .hero-title .highlight {
+            background: linear-gradient(135deg, var(--brand-diet), var(--brand-notify));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 40px;
+            font-weight: 400;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--brand-diet), var(--brand-notify));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 100px 20px;
+            background: #fff;
+        }
+
+        .content-section.alt {
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.03), rgba(8, 145, 178, 0.03));
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-grid.reverse {
+            direction: rtl;
+        }
+
+        .section-grid.reverse>* {
+            direction: ltr;
+        }
+
+        .section-content {
+            padding: 20px 0;
+        }
+
+        .section-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--brand-diet), var(--brand-notify));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 25px;
+            letter-spacing: -1px;
+            color: var(--text-primary);
+        }
+
+        .section-text {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .feature-icon-sm {
+            width: 28px;
+            height: 28px;
+            background: var(--brand-diet);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .feature-text strong {
+            display: block;
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .feature-text span {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* Image Cards */
+        .image-card {
+            position: relative;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .image-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.3));
+        }
+
+        /* Values Section */
+        .values-section {
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #fff;
+        }
+
+        .values-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .values-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .values-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .value-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .value-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--brand-diet), var(--brand-notify));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 25px;
+            color: #fff;
+        }
+
+        .value-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .value-text {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(22, 163, 74, 0.05), rgba(8, 145, 178, 0.05));
+        }
+
+        .cta-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .cta-text {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 35px;
+        }
+
+        .btn-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, var(--brand-diet), var(--brand-notify));
+            color: #fff;
+            padding: 18px 40px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 15px 40px rgba(22, 163, 74, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 60px 20px 40px;
+            background: #0f172a;
+            color: #fff;
+            text-align: center;
+        }
+
+        .footer-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .copyright {
+            color: #64748b;
+            font-size: 0.85rem;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive - Tablet */
+        @media (max-width: 992px) {
+
+            .section-grid,
+            .section-grid.reverse {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                direction: ltr;
+            }
+
+            .values-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .hero-stats {
+                gap: 25px;
+            }
+
+            .section-content {
+                padding: 10px 0;
+            }
+
+            .section-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .hero-section {
+                background-attachment: scroll;
+                min-height: auto;
+                padding: 120px 20px 60px;
+            }
+        }
+
+        /* Responsive - Mobile */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 100px 15px 50px;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+                letter-spacing: -1px;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .hero-badge {
+                padding: 8px 18px;
+                font-size: 0.8rem;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .content-section {
+                padding: 50px 15px;
+            }
+
+            .section-title {
+                font-size: 1.6rem;
+            }
+
+            .section-text {
+                font-size: 1rem;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+
+            .value-card {
+                padding: 30px 20px;
+            }
+
+            .values-section {
+                padding: 60px 15px;
+            }
+
+            .cta-section {
+                padding: 60px 15px;
+            }
+
+            .cta-title {
+                font-size: 1.6rem;
+            }
+
+            .btn-cta {
+                padding: 14px 30px;
+                font-size: 1rem;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .image-card {
+                border-radius: 20px;
+            }
+
+            .feature-list {
+                gap: 15px;
+            }
+
+            .feature-text strong {
+                font-size: 0.95rem;
+            }
+
+            .feature-text span {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Responsive - Small phones */
+        @media (max-width: 380px) {
+            .hero-title {
+                font-size: 1.9rem;
+            }
+
+            .section-title {
+                font-size: 1.4rem;
+            }
+
+            .stat-value {
+                font-size: 1.7rem;
+            }
+
+            .value-title {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+            <a href="/index.html" class="brand-wrapper">
+                <div class="brand-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                        <defs>
+                            <linearGradient id="logo-gradient-about" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:var(--brand-diet)" />
+                                <stop offset="100%" style="stop-color:var(--brand-yellow)" />
+                            </linearGradient>
+                        </defs>
+                        <path fill="url(#logo-gradient-about)"
+                            d="M50 15C30 15 15 35 15 55C15 75 35 85 50 85C65 85 85 75 85 55C85 35 70 15 50 15ZM50 78C35 78 25 68 25 55C25 42 35 32 50 25C65 32 75 42 75 55C75 68 65 78 50 78Z" />
+                        <path fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"
+                            stroke-linejoin="round" d="M25 55H40L45 40L55 70L60 55H75" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span style="color: var(--brand-diet);">Diet</span><span
+                        style="color: var(--brand-notify);">Notify</span>
+                </div>
+            </a>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/nutrition.html">Nutrition Engine</a></li>
+                <li><a href="/diet">Scientific Protocol</a></li>
+                <li><a href="/about" style="color: var(--brand-diet);">About</a></li>
+                <li id="nav-auth-item">
+                    <a href="/login" class="btn btn-primary"
+                        style="padding: 10px 25px; border-radius: 50px; background: var(--brand-notify); color: white; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-lock"></i> <span>Login</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-flask"></i>
+                Science-Driven Nutrition
+            </div>
+            <h1 class="hero-title">
+                Transforming Health<br>
+                Through <span class="highlight">Precision Science</span>
+            </h1>
+            <p class="hero-subtitle">
+                We combine cutting-edge AI technology with evidence-based nutritional science to deliver
+                personalized diet protocols that adapt to your unique biology.
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value">50K+</div>
+                    <div class="stat-label">Food Items Analyzed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">99.2%</div>
+                    <div class="stat-label">Data Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">AI Assistance</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="content-section">
+        <div class="section-grid">
+            <div class="section-content">
+                <div class="section-icon">
+                    <i class="fas fa-microscope"></i>
+                </div>
+                <h2 class="section-title">Our Scientific Mission</h2>
+                <p class="section-text">
+                    DietNotify was born from a powerful vision: to bridge ancient nutritional wisdom with
+                    modern computational science. We believe health shouldn't be a guessing game.
+                </p>
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-icon-sm"><i class="fas fa-check"></i></div>
+                        <div class="feature-text">
+                            <strong>Evidence-Based Protocols</strong>
+                            <span>Every recommendation backed by peer-reviewed research and standardized data.</span>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon-sm"><i class="fas fa-check"></i></div>
+                        <div class="feature-text">
+                            <strong>AI-Powered Insights</strong>
+                            <span>Advanced machine learning algorithms that understand your unique biology.</span>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon-sm"><i class="fas fa-check"></i></div>
+                        <div class="feature-text">
+                            <strong>Real-Time Adaptation</strong>
+                            <span>Dynamic protocols that evolve with your progress and lifestyle changes.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="image-card">
+                <img src="/static/img/about_science.png" alt="Nutritional Science Research">
+            </div>
+        </div>
+    </section>
+
+    <!-- Diety AI Section -->
+    <section class="content-section alt">
+        <div class="section-grid reverse">
+            <div class="section-content">
+                <div class="section-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h2 class="section-title">Meet Diety, Your AI Companion</h2>
+                <p class="section-text">
+                    Our next-generation AI nutrition companion doesn't just calculate macros—it understands
+                    the nuanced relationship between lifestyle, genetics, and peak performance.
+                </p>
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-icon-sm"><i class="fas fa-brain"></i></div>
+                        <div class="feature-text">
+                            <strong>Advanced Neural Networks</strong>
+                            <span>Powered by state-of-the-art language models for intelligent conversations.</span>
+                        </div>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon-sm"><i class="fas fa-bell"></i></div>
+                        <div class="feature-text">
+                            <strong>Smart Notifications</strong>
+                            <span>Timely reminders and insights delivered exactly when you need them.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="image-card">
+                <img src="/static/img/about_assistant.png" alt="AI Nutrition Assistant">
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Values -->
+    <section class="values-section">
+        <div class="container">
+            <div class="values-header">
+                <h2 class="values-title">Our Core Values</h2>
+                <p class="values-subtitle">The principles that guide everything we do at DietNotify</p>
+            </div>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3 class="value-title">Scientific Integrity</h3>
+                    <p class="value-text">Every feature is validated by peer-reviewed research and clinical data.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon"><i class="fas fa-users"></i></div>
+                    <h3 class="value-title">Accessibility</h3>
+                    <p class="value-text">Making precision nutrition available to everyone, everywhere.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon"><i class="fas fa-lightbulb"></i></div>
+                    <h3 class="value-title">Innovation</h3>
+                    <p class="value-text">Continuously pushing the boundaries of what's possible in nutrition tech.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="cta-title">Ready to Transform Your Health?</h2>
+            <p class="cta-text">
+                Join thousands who have already discovered the power of science-driven nutrition.
+            </p>
+            <a href="/diet" class="btn-cta">
+                <i class="fas fa-rocket"></i>
+                Get Started Free
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-brand">
+                <span style="color: var(--brand-diet);">Diet</span><span>Notify</span>
+            </div>
+            <p class="footer-text">The Future of Computational Nutrition</p>
+            <div class="footer-links">
+                <a href="/index.html">Home</a>
+                <a href="/nutrition.html">Nutrition</a>
+                <a href="/diet">Diet Plans</a>
+                <a href="/about">About</a>
+            </div>
+            <div class="copyright">
+                &copy; 2026 DietNotify Research Group. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/navbar.js"></script>
+    <!-- Diety AI Assistant -->
+    <div id="dietyContainer" class="diety-container">
+        <div id="dietyChatWindow" class="diety-chat-window">
+            <div class="diety-header">
+                <img src="/static/img/logo.svg" alt="Diety">
+                <span>Diety</span>
+                <button id="dietyClose"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
+            </div>
+            <div id="dietyMessages" class="diety-messages"></div>
+            <div class="diety-input">
+                <input type="text" id="dietyInput" placeholder="How can I help you?">
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg></button>
+            </div>
+        </div>
+        <div id="dietyToggle" class="diety-toggle">
+            <img src="/static/img/logo.svg" alt="Diety">
+            <div id="dietyBadge" class="diety-badge"></div>
+        </div>
+    </div>
+    <script src="/static/js/assistant_manager.js" defer></script>
+</body>
+
+</html>

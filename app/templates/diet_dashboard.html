@@ -227,8 +227,8 @@
             height: 100vh;
             overflow-y: auto;
             /* Independent scroll */
-            padding: 35px 40px 150px;
-            /* Increased bottom padding */
+            padding: 35px 40px 180px;
+            /* Extra bottom padding for mobile nav */
             position: relative;
             z-index: 1;
             scroll-behavior: smooth;
@@ -316,6 +316,15 @@
             height: 4px;
             background: var(--gradient-main);
             border-radius: 2px;
+        }
+
+        /* Ensure sections have enough bottom padding for mobile nav */
+        #overview,
+        #analysis,
+        #meals,
+        #progress,
+        #experts {
+            padding-bottom: 100px;
         }
 
         .section-header h1 {
@@ -1451,14 +1460,18 @@
 
         /* MOBILE OPTIMIZATIONS FOR MODAL */
         @media (max-width: 480px) {
+            .modal {
+                padding: 0;
+            }
+
             .modal-content {
-                width: 100% !important;
-                height: 100% !important;
-                max-width: 100% !important;
-                max-height: 100vh !important;
-                margin: 0 !important;
-                border-radius: 0 !important;
-                border: none !important;
+                width: 96% !important;
+                height: auto !important;
+                max-width: 96% !important;
+                max-height: 94vh !important;
+                margin: 20px auto !important;
+                border-radius: 20px !important;
+                border: 1px solid var(--glass-border) !important;
             }
 
             .modal-header {
@@ -1470,18 +1483,43 @@
             #notifSettingsContent {
                 flex: 1;
                 overflow-y: auto;
+                overflow-x: hidden;
                 /* Scrollable middle content */
-                padding: 10px 20px 40px !important;
+                padding: 10px 12px 80px !important;
                 /* Extra bottom padding */
+            }
+
+            /* Fix mobile inputs */
+            .modal-content input,
+            .modal-content select {
+                width: 100%;
+                box-sizing: border-box;
+                min-height: 44px;
             }
 
             .modal-footer {
                 flex-shrink: 0;
                 /* Keep footer visible */
-                padding: 20px !important;
+                padding: 15px 20px !important;
                 background: rgba(255, 255, 255, 0.95);
                 /* Opaque bg for buttons */
                 border-top: 1px solid rgba(0, 0, 0, 0.05);
+                /* Ensure it stays at bottom */
+                position: sticky;
+                bottom: 0;
+                z-index: 10;
+            }
+
+            /* Confirm Modal Specifics */
+            #confirmModal .modal-content {
+                max-width: 350px !important;
+                height: auto !important;
+                min-height: auto !important;
+            }
+
+            #confirmModal .modal-footer {
+                flex-direction: row !important;
+                gap: 10px;
             }
         }
     </style>
@@ -1576,6 +1614,10 @@
                     <span class="nav-icon"><i class="fas fa-map-marked-alt"></i></span>
                     <span>Nearby Experts</span>
                 </a></li>
+            <li><a class="nav-link" href="/about">
+                    <span class="nav-icon"><i class="fas fa-info-circle"></i></span>
+                    <span>About</span>
+                </a></li>
             <li><a class="nav-link" href="/diet/create">
                     <span class="nav-icon"><i class="fas fa-plus"></i></span>
                     <span>Create New Plan</span>
@@ -1652,9 +1694,16 @@
 
         <!-- SECTION 1: OVERVIEW -->
         <section id="overview" class="dashboard-section active">
-            <div class="section-header">
-                <h1>Your Bio-Profile</h1>
-                <p>Personalized metrics and daily targets at a glance</p>
+            <div class="section-header"
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <h1>Your Bio-Profile</h1>
+                    <p>Personalized metrics and daily targets at a glance</p>
+                </div>
+                <button class="btn btn-primary" onclick="openPlanSwitcher()"
+                    style="border-radius: 50px; font-size: 0.85rem; padding: 10px 20px;">
+                    <i class="fas fa-history"></i> <span>Switch Plan</span>
+                </button>
             </div>
 
             <div class="swiper-wrapper">
@@ -1976,11 +2025,58 @@
                         style="flex: 1; border: none; background: transparent; color: var(--accent-orange); font-size: 0.9rem;">
                         Reset to Default
                     </button>
-                    <button class="btn btn-secondary" onclick="closeModal('notificationSettingsModal')"
+                    <button class="btn btn-secondary" onclick="closeDietModal('notificationSettingsModal')"
                         style="flex: 1; border: 1px solid var(--glass-border); color: var(--text-secondary); border-radius: 12px;">
                         Cancel
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PLAN SWITCHER MODAL -->
+    <div id="planSwitcherModal" class="modal">
+        <div class="modal-content glass-card" style="max-width: 600px; width: 90%;">
+            <div class="modal-header">
+                <div class="header-icon"><i class="fas fa-history"></i></div>
+                <h2>Switch Diet Plan</h2>
+                <p>Select from your previously saved plans</p>
+            </div>
+
+            <div id="planSwitcherContent"
+                style="padding: 20px; overflow-y: auto; max-height: 50vh; overflow-x: hidden;">
+                <div class="loading-state" style="padding: 40px; text-align: center;">
+                    <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--accent-primary);"></i>
+                    <p style="margin-top: 15px;">Loading your history...</p>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding: 20px; border-top: 1px solid var(--glass-border);">
+                <button class="btn btn-secondary" onclick="closeDietModal('planSwitcherModal')"
+                    style="width: 100%; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GENERIC CONFIRMATION MODAL -->
+    <div id="confirmModal" class="modal" style="z-index: 10000;">
+        <div class="modal-content glass-card" style="max-width: 400px; width: 90%; text-align: center;">
+            <div class="modal-header" style="justify-content: center; padding-bottom: 5px;">
+                <div class="header-icon"
+                    style="background: var(--accent-orange); width: 60px; height: 60px; margin: 0 auto;">
+                    <i class="fas fa-question" style="font-size: 1.8rem;"></i>
+                </div>
+            </div>
+            <div class="modal-body" style="padding: 15px 30px;">
+                <h3 id="confirmTitle" style="margin-bottom: 10px; color: var(--text-primary);">Are you sure?</h3>
+                <p id="confirmMessage" style="color: var(--text-secondary); line-height: 1.5;">Do you want to proceed
+                    with this action?</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center; gap: 15px; padding: 25px;">
+                <button class="btn btn-secondary" id="confirmCancelBtn" style="min-width: 100px;">Cancel</button>
+                <button class="btn btn-primary" id="confirmOkBtn" style="min-width: 100px;">Confirm</button>
             </div>
         </div>
     </div>
@@ -2227,7 +2323,7 @@
                         <span class="phase">${step.phase || 'Phase'}</span>
                         <span class="trigger">${step.trigger}</span>
                         <span class="process">${step.process}</span>
-                        <span class="outcome">🎯 ${step.outcome}</span>
+                        <span class="outcome"><i class="fas fa-bullseye"></i> ${step.outcome}</span>
                     </div>
                 `).join('');
             }
@@ -2402,7 +2498,7 @@
             strategyPoints.forEach((p, i) => {
                 strategyList.innerHTML += `
                     <li class="bullet-item">
-                        <span class="bullet-icon">🎯</span>
+                        <span class="bullet-icon"><i class="fas fa-bullseye"></i></span>
                         <div class="bullet-content"><p>${p}</p></div>
                     </li>`;
             });
@@ -2576,7 +2672,7 @@
                     <div class="milestone-item" style="display: block; padding: 15px;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                             <span class="milestone-week">WEEK ${m.week || ''}</span>
-                            <span class="milestone-icon">🧬</span>
+                            <span class="milestone-icon"><i class="fas fa-dna"></i></span>
                         </div>
                         <div class="bullet-content">
                             <ul style="margin: 0;">${subPointsHtml}</ul>
@@ -2611,7 +2707,7 @@
                 const subPointsHtml = (item.points || []).map(p => `<li>${p}</li>`).join('');
                 el.innerHTML += `
                     <li class="bullet-item">
-                        <span class="bullet-icon">🧬</span>
+                        <span class="bullet-icon"><i class="fas fa-dna"></i></span>
                         <div class="bullet-content">
                             <h4 style="color: var(--accent-primary);">${item.name || ''}</h4>
                             <ul>${subPointsHtml}</ul>
@@ -2779,21 +2875,27 @@
         }
 
         // Modal Helpers
-        function openModal(modalId) {
+        function openDietModal(modalId) {
             const modal = document.getElementById(modalId);
-            if (modal) modal.style.display = 'flex';
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.add('show');
+            }
         }
 
-        function closeModal(modalId) {
+        function closeDietModal(modalId) {
             const modal = document.getElementById(modalId);
-            if (modal) modal.style.display = 'none';
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+            }
         }
 
         // ============== NOTIFICATION CUSTOMIZATION ==============
         let currentCustomTimings = {};
 
         async function openNotificationSettings() {
-            openModal('notificationSettingsModal');
+            openDietModal('notificationSettingsModal');
             const content = document.getElementById('notifSettingsContent');
 
             content.innerHTML = `
@@ -2858,37 +2960,87 @@
                     return `${String(hours).padStart(2, '0')}:${minutes}`;
                 };
 
-                let html = '<div class="notif-settings-list" style="margin-top: 0;">';
-                meals.forEach(meal => {
+                // Enforce container visibility
+                let html = '<div class="notif-settings-list" style="margin-top: 0; width: 100%; display: block;">';
+                meals.forEach((meal, index) => {
                     const mealName = meal.name;
+                    // Use index to guarantee unique IDs (avoids collision like "Pre Workout" vs "Pre-Workout")
+                    const safeName = `meal-card-${index}`;
+                    const escapedMealName = mealName.replace(/'/g, "\\'"); // Escape single quotes for onclick
+
                     const defaultTime = meal.time;
                     const currentTime = currentCustomTimings[mealName] || defaultTime;
                     const timeValue = formatTimeForInput(currentTime);
+                    const isCustom = currentCustomTimings[mealName] && currentCustomTimings[mealName] !== defaultTime;
 
-                    // COMPACT CARD DESIGN
+                    // EXPANDABLE CARD DESIGN (Mobile Friendly) - Explicit Colors
                     html += `
-                        <div class="notif-settings-item" style="padding: 10px 12px; gap: 10px; align-items: center; border-radius: 12px;">
-                            <div class="notif-settings-meal-info" style="gap: 10px; flex: 1; min-width: 0;">
-                                <div class="notif-icon-circle" style="width: 32px; height: 32px; font-size: 0.9rem;">
-                                    <i class="fas fa-utensils"></i>
+                        <div class="notif-settings-item" style="padding: 0; border-radius: 16px; margin-bottom: 12px; background: #ffffff; border: 1px solid rgba(0,0,0,0.08); overflow: hidden; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
+                            
+                            <!-- HEADER: Always Visible, Click to Expand -->
+                            <div class="notif-card-header" onclick="toggleMealCard('${safeName}')" 
+                                style="padding: 14px 15px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: #ffffff; transition: background 0.2s;">
+                                <div class="notif-meal-info" style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="notif-icon-circle" style="width: 36px; height: 36px; font-size: 1rem; display: flex; align-items: center; justify-content: center; background: rgba(8, 145, 178, 0.1); border-radius: 50%; color: var(--accent-primary);">
+                                        <i class="fas fa-bowl-food"></i>
+                                    </div>
+                                    <div class="notif-meal-details">
+                                        <div class="notif-meal-name" style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">${mealName}</div>
+                                        <div class="notif-time-preview" style="font-size: 0.8rem; color: var(--text-secondary);">
+                                            <i class="far fa-clock"></i> ${currentTime} 
+                                            ${isCustom ? '<span style="color: var(--accent-primary); font-weight:600;">(Custom)</span>' : ''}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="notif-meal-details" style="min-width: 0;">
-                                    <div class="notif-meal-name" style="font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${mealName}</div>
-                                    <div class="notif-default-time" style="font-size: 0.75rem;">Std: ${defaultTime}</div>
+                                <div class="expand-icon" id="icon-${safeName}" style="color: var(--text-muted); transition: transform 0.3s ease;">
+                                    <i class="fas fa-chevron-down"></i>
                                 </div>
                             </div>
-                            <div class="notif-actions" style="display: flex; align-items: center; gap: 8px;">
-                                <button onclick="forceFireNotification('${mealName}')" 
-                                    style="padding: 6px 12px; background: var(--accent-primary); border-radius: 8px; color: white; border: none; font-size: 0.75rem; font-weight: 700; box-shadow: 0 2px 5px rgba(0,0,0,0.1);"
-                                    title="Send Test Notification">
-                                    SEND
-                                </button>
-                                <input type="time" class="notif-time-input" data-meal="${mealName}" value="${timeValue}"
-                                    style="padding: 6px 10px; font-size: 0.9rem; width: 100px;">
+
+                            <!-- BODY: Hidden by Default, Contains Controls -->
+                            <div class="notif-card-body" id="body-${safeName}" style="display: none; padding: 15px; border-top: 1px solid rgba(0,0,0,0.05); background: rgba(0,0,0,0.01);">
+                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                                    
+                                    <!-- Time Picker -->
+                                    <div style="flex: 1; min-width: 120px;">
+                                        <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px;">REMINDER TIME</label>
+                                        <input type="time" class="notif-time-input" data-meal="${mealName}" value="${timeValue}"
+                                            style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--glass-border); font-family: 'Outfit', sans-serif; font-size: 1rem;">
+                                    </div>
+
+                                    <!-- Send Test Button -->
+                                    <div style="flex-shrink: 0; align-self: flex-end;">
+                                         <button onclick="forceFireNotification('${escapedMealName}')" 
+                                            style="padding: 10px 16px; background: var(--accent-primary); border-radius: 10px; color: white; border: none; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                                            <i class="fas fa-paper-plane"></i> Test
+                                        </button>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 0;">
+                                    <i class="fas fa-info-circle"></i> Notification will be sent at this time daily.
+                                </p>
                             </div>
                         </div>`;
                 });
                 html += '</div>';
+
+                // Add Script for Toggle Logic if not already present
+                if (!window.toggleMealCard) {
+                    window.toggleMealCard = function (id) {
+                        const body = document.getElementById(`body-${id}`);
+                        const icon = document.getElementById(`icon-${id}`);
+
+                        if (body.style.display === 'none') {
+                            body.style.display = 'block';
+                            icon.style.transform = 'rotate(180deg)';
+                            icon.style.color = 'var(--accent-primary)';
+                        } else {
+                            body.style.display = 'none';
+                            icon.style.transform = 'rotate(0deg)';
+                            icon.style.color = 'var(--text-muted)';
+                        }
+                    };
+                }
 
                 // COLLAPSIBLE TROUBLESHOOTING
                 html += `
@@ -2953,7 +3105,7 @@
 
                 if (result.success) {
                     showNotificationToast('✅ Saved', 'Meal reminders rescheduled!');
-                    closeModal('notificationSettingsModal');
+                    closeDietModal('notificationSettingsModal');
                     // Refresh status to show new schedule count
                     checkNotificationStatus();
                 } else {
@@ -2988,34 +3140,26 @@
 
         async function fixNotificationConnection() {
             const statusEl = document.getElementById('debugStatus');
-            statusEl.innerHTML = '<span style="color: var(--accent-tertiary);"><i class="fas fa-spinner fa-spin"></i> Refreshing connection...</span>';
+            statusEl.innerHTML = '<span style="color: var(--accent-tertiary);"><i class="fas fa-spinner fa-spin"></i> Resetting ID...</span>';
 
             try {
-                // Force unregister
-                if (window.notificationManager.swRegistration) {
-                    await window.notificationManager.swRegistration.unregister();
-                }
-
-                // Re-init (will use new cache-bust)
-                const success = await window.notificationManager.init();
+                // Use the new HARD RESET method which explicitly deletes the bad token
+                const success = await window.notificationManager.hardReset();
 
                 if (success) {
-                    // Re-register token
-                    await window.notificationManager.getToken();
-                    await window.notificationManager.registerToken();
-                    statusEl.innerHTML = '<span style="color: #16a34a;"><i class="fas fa-check"></i> Re-connected! Try "Test Now".</span>';
+                    statusEl.innerHTML = '<span style="color: #16a34a;"><i class="fas fa-check"></i> <b>Fixed!</b> ID Refreshed.</span>';
+                    showNotificationToast('✅ Connection Fixed', 'Your mobile is now using the correct Key.');
 
                     // Refresh visual status
                     checkNotificationStatus();
                 } else {
-                    statusEl.innerHTML = '<span style="color: #dc2626;">Failed to re-initialize.</span>';
+                    statusEl.innerHTML = '<span style="color: #dc2626;">Reset failed. Try reloading.</span>';
                 }
             } catch (e) {
                 console.error(e);
                 statusEl.innerHTML = `<span style="color: #dc2626;">Error: ${e.message}</span>`;
             }
         }
-
         function toggleDebugLogs() {
             const el = document.getElementById('liveLogs');
             if (el.style.display === 'none') {
@@ -3034,10 +3178,46 @@
             }
         }
 
-        async function forceFireNotification(mealName) {
-            if (!confirm(`Send immediate test notification for "${mealName}"?`)) return;
+        // --- CUSTOM CONFIRM MODAL LOGIC ---
+        function showConfirmModal(title, message) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('confirmModal');
+                const titleEl = document.getElementById('confirmTitle');
+                const msgEl = document.getElementById('confirmMessage');
+                const okBtn = document.getElementById('confirmOkBtn');
+                const cancelBtn = document.getElementById('confirmCancelBtn');
 
-            showNotificationToast('🚀 Sending...', `Triggering ${mealName}`);
+                titleEl.textContent = title;
+                msgEl.textContent = message;
+
+                const close = (result) => {
+                    modal.classList.remove('show');
+                    resolve(result);
+                };
+
+                okBtn.onclick = () => close(true);
+                cancelBtn.onclick = () => close(false);
+
+                // Click outside to cancel
+                modal.onclick = (e) => {
+                    if (e.target === modal) close(false);
+                };
+
+                modal.classList.add('show');
+            });
+        }
+
+        async function forceFireNotification(mealName) {
+            const confirmed = await showConfirmModal(
+                'Send Notification?',
+                `Send immediate test notification for "${mealName}"?`
+            );
+
+            if (!confirmed) return;
+
+            showNotificationToast('Sending...', `Triggering ${mealName}`);
+            // ... rest of function ...
+
 
             try {
                 const response = await fetch('/api/notifications/debug/force_fire', {
@@ -3090,7 +3270,14 @@
         }
 
         async function resetToDefaultTimings() {
-            if (!confirm('Reset all meal times to their original plan defaults?')) return;
+            const confirmed = await showConfirmModal(
+                'Reset Schedule?',
+                'Reset all meal times to their original plan defaults?'
+            );
+
+            if (!confirmed) return;
+
+            const btn = document.querySelector('button[onclick="resetToDefaultTimings()"]');
 
             try {
                 const result = await window.notificationManager.updatePreferences({
@@ -3099,7 +3286,7 @@
 
                 if (result.success) {
                     showNotificationToast('✅ Reset', 'Back to original meal plan times!');
-                    closeModal('notificationSettingsModal');
+                    closeDietModal('notificationSettingsModal');
                     checkNotificationStatus();
                 } else {
                     throw new Error(result.error || 'Reset failed');
@@ -3135,6 +3322,113 @@
     </div>
 
 
+    <script src="/static/js/assistant_manager.js" defer></script>
+    <script src="/static/js/i18n.js"></script>
+    <script>
+        async function openPlanSwitcher() {
+            const modal = document.getElementById('planSwitcherModal');
+            modal.classList.add('show');
+            const content = document.getElementById('planSwitcherContent');
+
+            try {
+                const response = await fetch('/api/diet/my_plans');
+                const data = await response.json();
+
+                if (!data.plans || data.plans.length === 0) {
+                    content.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);"><i class="fas fa-ghost" style="font-size: 3rem; margin-bottom: 20px; display: block;"></i>No other plans found.</div>';
+                    return;
+                }
+
+                content.innerHTML = `
+                    <div class="plan-list" style="display: flex; flex-direction: column; gap: 12px;">
+                        ${data.plans.map(plan => {
+                    const date = new Date(plan.created_at).toLocaleDateString();
+                    const isActive = plan.is_active;
+                    return `
+                                <div class="plan-item ${isActive ? 'active' : ''}" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border: 1px solid var(--glass-border); border-radius: 14px; background: rgba(0,0,0,0.02);">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 40px; height: 40px; background: var(--gradient-main); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: black;">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 700;">${plan.duration_type.toUpperCase()} Plan</div>
+                                            <div style="font-size: 0.8rem; color: var(--text-muted);">Created ${date}</div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        ${isActive ? '<span class="active-badge" data-i18n="plan_active">ACTIVE</span>' :
+                            `<button class="edit-profile-btn" onclick="activatePlanFromDash('${plan.id}')" style="padding: 5px 10px;" data-i18n="plan_activate">Activate</button>`}
+                                        <button class="edit-profile-btn" onclick="viewPlanFromDash('${plan.id}')" style="padding: 5px 10px;" data-i18n="plan_view">View</button>
+                                    </div>
+                                </div>
+                            `;
+                }).join('')}
+                    </div>
+                `;
+            } catch (e) {
+                content.innerHTML = '<div style="color: var(--accent-red); padding: 20px;">Error loading plans.</div>';
+            }
+        }
+
+        async function activatePlanFromDash(planId) {
+            try {
+                const response = await fetch(`/api/diet/set_active/${planId}`, { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    window.location.reload();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function viewPlanFromDash(planId) {
+            try {
+                const response = await fetch(`/api/diet/plan/${planId}`);
+                const data = await response.json();
+                if (data.plan) {
+                    localStorage.setItem('fullDietData', JSON.stringify(data.plan.plan_data));
+                    localStorage.setItem('planSaved', 'true');
+                    window.location.reload();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function closeDietModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+            }
+        }
+    </script>
+    <!-- Diety AI Assistant -->
+    <div id="dietyContainer" class="diety-container">
+        <div id="dietyChatWindow" class="diety-chat-window">
+            <div class="diety-header">
+                <img src="/static/img/logo.svg" alt="Diety">
+                <span>Diety</span>
+                <button id="dietyClose"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
+            </div>
+            <div id="dietyMessages" class="diety-messages"></div>
+            <div class="diety-input">
+                <input type="text" id="dietyInput" placeholder="How can I help you?">
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg></button>
+            </div>
+        </div>
+        <div id="dietyToggle" class="diety-toggle">
+            <img src="/static/img/logo.svg" alt="Diety">
+            <div id="dietyBadge" class="diety-badge"></div>
+        </div>
+    </div>
     <script src="/static/js/assistant_manager.js" defer></script>
 </body>
 

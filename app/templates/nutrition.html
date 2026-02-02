@@ -71,9 +71,11 @@
                 <li><a href="/index.html">Home</a></li>
                 <li><a href="/nutrition.html">Nutrition Engine</a></li>
                 <li><a href="/diet">Scientific Protocol</a></li>
+                <li><a href="/about">About</a></li>
                 <li id="nav-auth-item">
-                    <a href="/login" class="btn btn-primary" style="padding: 8px 20px; border-radius: 25px;">🔐
-                        Login</a>
+                    <a href="/login" class="btn btn-primary" style="padding: 8px 20px; border-radius: 25px;"><i
+                            class="fas fa-lock"></i>
+                        <span>Login</span></a>
                 </li>
             </ul>
         </div>
@@ -85,8 +87,8 @@
         style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 100px;">
 
         <div class="section-header" style="margin-bottom: 40px;">
-            <span class="badge badge-glow">🔬 Nutrition Engine</span>
-            <h1 style="font-size: 2.8rem; margin-top: 16px;">Select Your <span class="gradient-text">Analysis
+            <span class="badge badge-glow"><i class="fas fa-microscope"></i> Nutrition Engine</span>
+            <h1 style="font-size: 2.8rem; margin-top: 16px;"><span>Select Your Analysis
                     Mode</span></h1>
             <p>Choose between single food lookup or complete meal calculation</p>
         </div>
@@ -101,7 +103,8 @@
                         <img src="/static/img/cards/search.png" alt="Search">
                     </div>
                     <h3>Single Food Search</h3>
-                    <p>Search any ingredient and view its complete nutritional profile with all micro and
+                    <p>Search any ingredient and view its complete nutritional profile with
+                        all micro and
                         macronutrients.
                     </p>
                     <ul class="feature-list" style="margin: 20px 0;">
@@ -110,7 +113,7 @@
                         <li>50+ data points per food</li>
                     </ul>
                     <button class="btn btn-primary" style="width: 100%;">
-                        <span>🚀</span> Launch Search
+                        <span><i class="fas fa-rocket"></i></span> Launch Search
                     </button>
                 </div>
 
@@ -120,14 +123,15 @@
                         <img src="/static/img/cards/meal.png" alt="Meal">
                     </div>
                     <h3>Daily Meal Calculator</h3>
-                    <p>Build your complete meal by adding multiple foods. Get the aggregated nutritional totals.</p>
+                    <p>Build your complete meal by adding multiple foods. Get the aggregated
+                        nutritional totals.</p>
                     <ul class="feature-list" style="margin: 20px 0;">
                         <li>Add multiple ingredients</li>
                         <li>Real-time aggregation</li>
                         <li>Track your daily intake</li>
                     </ul>
                     <button class="btn btn-outline" style="width: 100%; border: 2px solid var(--primary);">
-                        <span>📊</span> Start Calculator
+                        <span><i class="fas fa-chart-bar"></i></span> Start Calculator
                     </button>
                 </div>
             </div>
@@ -152,7 +156,7 @@
 
             <div class="search-bar">
                 <input type="text" id="mainSearchInput" class="search-input"
-                    placeholder="🔍 Search foods... (e.g., 'rice', 'apple', 'paneer')" autocomplete="off">
+                    placeholder="Search foods... (e.g., 'rice', 'apple', 'paneer')" autocomplete="off">
             </div>
 
             <div id="searchResults" class="search-results">
@@ -165,13 +169,13 @@
 
                 <h2 id="detailName"
                     style="font-size: 2rem; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
-                    <span>🥗</span> <span class="gradient-text">Food Name</span>
+                    <span><i class="fas fa-leaf"></i></span> <span class="gradient-text">Food Name</span>
                 </h2>
 
                 <div style="margin-bottom: 32px;">
                     <h4
                         style="display: flex; align-items: center; gap: 8px; color: var(--primary); margin-bottom: 16px; font-size: 1.1rem;">
-                        <span>📊</span> Major Nutrients
+                        <span><i class="fas fa-chart-bar"></i></span> Major Nutrients
                     </h4>
                     <div id="majorNutrientsGrid" class="macros-grid">
                         <!-- Injected via JS -->
@@ -181,7 +185,7 @@
                 <div>
                     <h4
                         style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); margin-bottom: 16px; font-size: 1.1rem;">
-                        <span>🔬</span> Detailed Nutrient Profile
+                        <span><i class="fas fa-microscope"></i></span> Detailed Nutrient Profile
                     </h4>
                     <div class="detailed-profile"
                         style="background: var(--bg-color); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border-color);">
@@ -216,7 +220,7 @@
             <div class="meal-builder">
                 <div class="search-bar" style="margin-bottom: 24px;">
                     <input type="text" id="mealSearchInput" class="search-input"
-                        placeholder="🔍 Add ingredient (e.g., 'Roti', 'Daal', 'Rice')..." autocomplete="off">
+                        placeholder="Add ingredient (e.g., 'Roti', 'Daal', 'Rice')..." autocomplete="off">
                     <div id="mealSearchResults" class="search-results"
                         style="position: absolute; width: 100%; z-index: 100;"></div>
                 </div>
@@ -224,7 +228,7 @@
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color);">
                     <h3 style="display: flex; align-items: center; gap: 8px;">
-                        <span>🍽️</span> Current Plate
+                        <span><i class="fas fa-utensils"></i></span> Current Plate
                     </h3>
                     <button class="btn btn-outline" id="clearLogBtn"
                         style="padding: 8px 16px; font-size: 0.85rem; color: #f87171; border-color: #f87171;">
@@ -241,13 +245,13 @@
             <div class="summary-panel">
                 <h3
                     style="margin-bottom: 24px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-                    <span>📈</span> Total Nutrition
+                    <span><i class="fas fa-chart-line"></i></span> Total Nutrition
                 </h3>
 
                 <div id="mealSummaryGrid">
                     <!-- Totals injected here -->
                     <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
-                        <div style="font-size: 3rem; margin-bottom: 12px;">🥗</div>
+                        <div style="font-size: 3rem; margin-bottom: 12px;"><i class="fas fa-leaf"></i></div>
                         <p>Add items to your plate to see nutritional totals</p>
                     </div>
                 </div>
@@ -368,13 +372,22 @@
             <div class="diety-header">
                 <img src="/static/img/logo.svg" alt="Diety">
                 <span>Diety</span>
-                <button id="dietyClose"><i class="fas fa-times"></i></button>
+                <button id="dietyClose"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
             </div>
             <div id="dietyMessages" class="diety-messages"></div>
             <div class="diety-input">
                 <input type="text" id="dietyInput" placeholder="How can I help you?">
-                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><i
-                        class="fas fa-paper-plane"></i></button>
+                <button id="dietySend" onclick="window.dietyAssistant.sendMessage()"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg></button>
             </div>
         </div>
         <div id="dietyToggle" class="diety-toggle">

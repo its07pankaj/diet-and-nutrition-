@@ -331,3 +331,133 @@ def clear_all_data() -> bool:
     except Exception as e:
         print(f"[Supabase] Clear data error: {e}")
         return False
+
+
+# ============== QUERY OPERATIONS ==============
+def save_user_query(email: str, query: str) -> tuple:
+    """Save a user query to the database"""
+    query_data = {
+        "email": email,
+        "query": query
+    }
+    
+    try:
+        response = requests.post(
+            f"{SUPABASE_URL}/rest/v1/user_queries",
+            headers=get_headers(),
+            json=query_data
+        )
+        
+        print(f"[Supabase] Save query response status: {response.status_code}")
+        if response.status_code == 201:
+            print(f"[Supabase] Query saved from: {email}")
+            return True, "Success"
+        else:
+            error_msg = response.text
+            print(f"[Supabase] Save query error: {error_msg}")
+            return False, error_msg
+    except Exception as e:
+        error_msg = str(e)
+        print(f"[Supabase] Query save exception: {error_msg}")
+        return False, error_msg
+
+
+# ============== DAILY TRACKING OPERATIONS ==============
+def save_daily_tracking(user_id: str, tracking_data: dict, force_update: bool = False) -> bool:
+    """
+    Save daily tracking report.
+    tracking_data should contain: date, items (list), total_score
+    If a record already exists for this date, it will be updated.
+    """
+    try:
+        today_date = tracking_data.get('date', datetime.now().strftime('%Y-%m-%d'))
+        
+        # Check if record exists for today
+        existing = get_tracking_for_date(user_id, today_date)
+        
+        record = {
+            "user_id": user_id,
+            "date": today_date,
+            "data": tracking_data.get('items', []),
+            "total_score": tracking_data.get('total_score', 0),
+            "created_at": datetime.utcnow().isoformat()
+        }
+        
+        if existing:
+            # Update existing record
+            response = requests.patch(
+                f"{SUPABASE_URL}/rest/v1/daily_tracking",
+                headers=get_headers(),
+                params={
+                    "user_id": f"eq.{user_id}",
+                    "date": f"eq.{today_date}"
+                },
+                json={
+                    "data": record["data"],
+                    "total_score": record["total_score"],
+                    "created_at": record["created_at"]
+                }
+            )
+        else:
+            # Insert new record
+            response = requests.post(
+                f"{SUPABASE_URL}/rest/v1/daily_tracking",
+                headers=get_headers(),
+                json=record
+            )
+        
+        if response.status_code in [200, 201, 204]:
+            action = "updated" if existing else "saved"
+            print(f"[Supabase] Daily tracking {action} for {user_id}")
+            return True
+        else:
+            print(f"[Supabase] Save tracking error: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"[Supabase] Save tracking exception: {e}")
+        return False
+
+
+def get_tracking_for_date(user_id: str, date: str) -> dict:
+    """Check if tracking exists for a specific date"""
+    try:
+        response = requests.get(
+            f"{SUPABASE_URL}/rest/v1/daily_tracking",
+            headers=get_headers(),
+            params={
+                "user_id": f"eq.{user_id}",
+                "date": f"eq.{date}",
+                "limit": "1"
+            }
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            return data[0] if data else None
+        return None
+    except Exception as e:
+        print(f"[Supabase] Check tracking error: {e}")
+        return None
+
+
+def get_tracking_history(user_id: str, limit: int = 7) -> list:
+    """Get recent tracking history for user"""
+    try:
+        response = requests.get(
+            f"{SUPABASE_URL}/rest/v1/daily_tracking",
+            headers=get_headers(),
+            params={
+                "user_id": f"eq.{user_id}",
+                "order": "date.desc",
+                "limit": str(limit)
+            }
+        )
+        
+        if response.status_code == 200:
+            return response.json()
+        return []
+    except Exception as e:
+        print(f"[Supabase] Get history error: {e}")
+        return []
+

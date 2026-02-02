@@ -23,6 +23,11 @@ def home():
 def nutrition():
     return render_template('nutrition.html')
 
+@main_bp.route('/about')
+@main_bp.route('/about.html')
+def about():
+    return render_template('about.html')
+
 
 
 # Static asset route is handled automatically by Flask for 'static' folder
@@ -101,3 +106,34 @@ def api_status():
         "message": "DietNotify API v2 running",
         "total_foods": len(loader.get_dataframe()) if loader else 0
     })
+
+@main_bp.route('/api/ask', methods=['POST'])
+def ask_query():
+    try:
+        data = request.json or {}
+        email = data.get('email', '').strip()
+        query = data.get('query', '').strip()
+
+        # Validation
+        if not email or "@" not in email:
+            return jsonify({"status": "error", "message": "Valid email is required"}), 400
+        
+        # Word count validation (1 - 30 words)
+        words = query.split()
+        if len(words) < 1:
+            return jsonify({"status": "error", "message": "Query cannot be empty"}), 400
+        if len(words) > 30:
+            return jsonify({"status": "error", "message": f"Query must be at most 30 words. Current: {len(words)}"}), 400
+
+        from .core.database import save_user_query
+        success, message = save_user_query(email, query)
+        
+        if success:
+            return jsonify({"status": "success", "message": "Query submitted successfully! Our science team will reach out soon."})
+        else:
+            print(f"Bkd Save Query Failure: {message}")
+            return jsonify({"status": "error", "message": f"Database error: {message}"}), 500
+
+    except Exception as e:
+        print(f"Error in /api/ask: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500

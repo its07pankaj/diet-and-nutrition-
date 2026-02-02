@@ -450,10 +450,14 @@ class NotificationManager {
                     // Professional Handling: Use Service Worker registration to show notification
                     // This ensures consistent behavior with background notifications
                     const title = payload.notification.title || 'DietNotify Reminder';
+                    const body = payload.notification.body || 'Time to eat!';
                     const timestamp = new Date().getTime();
 
+                    // 1. ALWAYS show an in-app Toast (Guarantees visibility if OS blocks notifications)
+                    this.showToast(`🔔 ${title.replace('🍽️ ', '')}`, body);
+
                     const options = {
-                        body: payload.notification.body,
+                        body: body,
                         icon: '/static/img/logo.svg',
                         badge: '/static/img/logo.svg',
                         // AGGRESSIVE VIBRATION: Long-Short-Long
@@ -472,7 +476,7 @@ class NotificationManager {
                         data: payload.data
                     };
 
-                    // Try standard Service Worker API first (Most Reliable/Professional)
+                    // 2. Try standard Service Worker API (Native Notification)
                     if (this.swRegistration && this.swRegistration.showNotification) {
                         this.swRegistration.showNotification(title, options)
                             .then(() => console.log('[Notifications] Displayed via SW'))
@@ -663,6 +667,53 @@ class NotificationManager {
         } catch (error) {
             console.error('[Notifications] Registration error:', error);
             return { success: false };
+        }
+    }
+
+    /**
+     * Hard Reset: Delete token and unregister SW to force fresh connection
+     */
+    async hardReset() {
+        console.log('[Notifications] Performing HARD RESET...');
+        try {
+            // 1. Delete token (This is the critical missing step)
+            if (this.messaging) {
+                try {
+                    await this.messaging.deleteToken();
+                    console.log('[Notifications] Token deleted.');
+                } catch (e) {
+                    console.warn('[Notifications] Token delete failed (could be already goone):', e);
+                }
+            }
+
+            // 2. Clear stored token
+            this.currentToken = null;
+
+            // 3. Unregister SW
+            if (this.swRegistration) {
+                await this.swRegistration.unregister();
+                console.log('[Notifications] SW unregistered.');
+            } else {
+                const reg = await navigator.serviceWorker.getRegistration();
+                if (reg) await reg.unregister();
+            }
+
+            // 4. Force Re-Init
+            await this.init();
+
+            // 5. Get NEW Token
+            const newToken = await this.getToken();
+
+            // 6. Register NEW Token
+            if (newToken) {
+                await this.registerToken(newToken);
+                return true;
+            }
+            return false;
+
+        } catch (e) {
+            console.error('[Notifications] Hard reset failed:', e);
+            throw e;
         }
     }
 

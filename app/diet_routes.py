@@ -59,6 +59,33 @@ def create_plan_page():
     return render_template('diet_create.html')
 
 
+@diet_bp.route('/daily-tracking')
+def daily_tracking_page():
+    """Daily Tracking / Reporting Page"""
+    if not is_authenticated():
+        return redirect('/login')
+    
+    user_id = get_current_user()
+    active_plan = get_active_plan(user_id)
+    
+    meals_data = []
+    if active_plan and 'plan_data' in active_plan:
+        # Extract meals from the AI generated plan
+        diet_protocol = active_plan['plan_data'].get('diet_protocol', {})
+        meals_data = diet_protocol.get('meals', [])
+        
+    return render_template('daily_tracking.html', meals=meals_data)
+
+
+@diet_bp.route('/analysis')
+def analysis_page():
+    """Your Analysis Page - Progress Overview"""
+    if not is_authenticated():
+        return redirect('/login')
+    
+    return render_template('analysis.html')
+
+
 @diet_bp.route('/diet/dashboard')
 def dashboard_page():
     """Diet dashboard page (Results)"""
@@ -325,3 +352,94 @@ def assistant_chat():
     except Exception as e:
         print(f"[DietRoutes] Assistant chat error: {e}")
         return jsonify({"error": str(e)}), 500
+
+
+@diet_bp.route('/api/tracking/save', methods=['POST'])
+def save_tracking():
+    """Save daily tracking report"""
+    if not is_authenticated():
+        return jsonify({"error": "Login required"}), 401
+        
+    try:
+        user_id = get_current_user()
+        data = request.json or {}
+        
+        # Basic validation
+        if 'items' not in data:
+            return jsonify({"error": "Missing tracking data"}), 400
+            
+        from .core.database import save_daily_tracking
+        success = save_daily_tracking(user_id, data)
+        
+        if success:
+            return jsonify({"success": True, "message": "Report saved successfully"})
+        else:
+            return jsonify({"error": "Failed to save into database"}), 500
+            
+    except Exception as e:
+        print(f"[DietRoutes] Save tracking error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@diet_bp.route('/api/tracking/history', methods=['GET'])
+def history_tracking():
+    """Get past tracking reports"""
+    if not is_authenticated():
+        return jsonify({"error": "Login required"}), 401
+        
+    try:
+        user_id = get_current_user()
+        limit = request.args.get('limit', 7, type=int)
+        
+        from .core.database import get_tracking_history
+        history = get_tracking_history(user_id, limit)
+        
+        return jsonify({
+            "success": True, 
+            "history": history
+        })
+            
+    except Exception as e:
+        print(f"[DietRoutes] History error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@diet_bp.route('/api/tracking/ai-analysis', methods=['POST'])
+def ai_analysis_api():
+    """Generate AI-powered progress analysis report"""
+    if not is_authenticated():
+        return jsonify({"error": "Login required"}), 401
+    
+    try:
+        user_id = get_current_user()
+        
+        # 1. Get user profile
+        from .core.database import get_profile
+        user_profile = get_profile(user_id)
+        if not user_profile:
+            return jsonify({"error": "User profile not found"}), 404
+            
+        # 2. Get active plan
+        from .core.database import get_active_plan
+        active_plan = get_active_plan(user_id)
+        if not active_plan:
+            return jsonify({"error": "No active diet plan found to analyze"}), 404
+            
+        # 3. Get tracking history (last 30 days)
+        from .core.database import get_tracking_history
+        history = get_tracking_history(user_id, 30)
+        
+        # 4. Run AI Analysis
+        from .services.ai_diet_service import DietAI
+        ai_service = DietAI()
+        report = ai_service.analyze_progress(user_profile, active_plan, history)
+        
+        return jsonify({
+            "success": True,
+            "report": report
+        })
+        
+    except Exception as e:
+        print(f"[DietRoutes] AI Analysis error: {e}")
+        return jsonify({"error": str(e)}), 500
+

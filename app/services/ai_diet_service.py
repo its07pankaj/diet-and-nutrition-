@@ -250,7 +250,8 @@ class DietAI:
     
     "reasoning_signature": "• Caloric targets calculated via Mifflin-St Jeor equation\\n• Macro split optimized for body recomposition\\n• Meal timing aligned with circadian rhythm\\n• Nutrient density prioritized over calorie counting"
 }
-
+ 
+ 
 === CUSTOMIZATION REQUIREMENTS ===
 1. CALCULATE actual BMI from user's height and weight
 2. CALCULATE actual TDEE based on activity level and goal (deficit for fat loss, surplus for muscle gain)
@@ -296,7 +297,8 @@ class DietAI:
 - Preferred Cuisine: {cuisine}
 - Health Conditions: {medical}
 - Allergies/Intolerances: {allergies}
-
+ 
+ 
 **PLAN PARAMETERS:**
 - Duration: {duration}
 - Output Format: Complete JSON protocol (NO markdown, NO text wrapping)
@@ -323,6 +325,7 @@ Generate the complete JSON protocol now:"""
                 return {"error": "AI Service unavailable - could not initialize client"}
         
         system_prompt = self._get_system_prompt()
+        
         user_prompt = self._build_user_prompt(user_profile, duration)
         
         # Try with API key rotation on failure
@@ -437,6 +440,131 @@ Generate the complete JSON protocol now:"""
                 self._initialize_client()
                 
         return []
+    def analyze_progress(self, user_profile: Dict[str, Any], active_plan: Dict[str, Any], tracking_history: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        AI Progress Analysis - Compares plan vs actual results and provides guidance.
+        Using Gemini 2.5 Flash for professional reporting.
+        """
+        if not self.client:
+            self._initialize_client()
+            if not self.client:
+                return {"error": "AI Service unavailable"}
+
+        model_to_use = "gemini-2.5-flash"
+        max_attempts = len(GEMINI_API_KEYS)
+
+        system_prompt = """You are a Senior High-Performance Bio-Data Analyst and Clinical Nutritionist.
+        Your goal is to provide a 'Progress Intelligence Report' by comparing the user's assigned 'Diet Protocol' with their 'Real-World Performance Logs' across TODAY, THIS WEEK, and THIS MONTH.
+
+        === ANALYSIS LOGIC ===
+        1. TODAY vs PROTOCOL: Compare specific meal ratings and adherence.
+        2. WEEKLY TRENDS: Analyze discipline and consistency trends.
+        3. MONTHLY OVERVIEW: Evaluate long-term likelihood of reaching the goal.
+        4. SMART FALLBACK: If data is sparse, provide predictive guidance and professional interpretation.
+
+        === CRITICAL REPORTING RULES ===
+        1. NO EMOJIS - Use professional, clinical terminology.
+        2. BULLET POINTS ONLY - All analysis and tactics MUST be in clear, concise bullet points.
+        3. NO PARAGRAPHS - Break down information into logical sections.
+        4. JSON ONLY - Return a clean, valid JSON object.
+        5. CHART ACCURACY - The 'trend' chart key MUST ONLY contain days present in the 'PERFORMANCE DATA'. DO NOT hallucinate or fill missing days. If user logged 2 days, show 2 bars.
+        6. SCORING REALISM - Do NOT give 100% scores for Weekly/Monthly if data is sparse. 
+           - 1 day of perfect data != 100% Weekly Score. 
+           - If logs < 3 days, Weekly Score max is 50%.
+           - If logs < 7 days, Monthly Score max is 40%.
+           - Analyze CONSISTENCY, not just adherence on logged days.
+
+        === EXPECTED JSON STRUCTURE ===
+        {
+          "executive_summary": "Professional synthesis (max 60 words).",
+          "performance_matrix": {
+             "today": {"score": 85, "analysis": ["Bullet 1", "Bullet 2"]},
+             "weekly": {"score": 70, "analysis": ["Bullet 1", "Bullet 2"]},
+             "monthly": {"score": 65, "analysis": ["Bullet 1", "Bullet 2"]}
+          },
+          "gap_analysis": [
+            {"finding": "Statement of gap", "impact": "Biological implication", "recommendation": "Specific fix", "priority": "CRITICAL/HIGH/MEDIUM"}
+          ],
+          "improvement_protocol": {
+            "daily_tactics": ["Concrete daily action step"],
+            "monthly_strategy": ["Concrete long-term strategy step"]
+          },
+          "chart_data": {
+            "radar": {
+                "labels": ["Discipline", "Timing", "Variety", "Hydration", "Recovery", "Energy"],
+                "values": [80, 75, 60, 90, 85, 70]
+            },
+            "trend": {
+                "labels": ["2026-03-01", "2026-03-02"],
+                "values": [85, 92]
+            }
+          }
+        }
+        """
+
+        # Pre-process history into Today, Weekly, Monthly for the AI
+        today_str = datetime.now().strftime('%Y-%m-%d')
+        today_data = [h for h in tracking_history if h.get('date') == today_str]
+        
+        from datetime import timedelta
+        week_ago = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+        weekly_data = [h for h in tracking_history if h.get('date') >= week_ago]
+        
+        # Calculate Data Completeness Factors
+        days_logged_week = len(set(h['date'] for h in weekly_data))
+        days_logged_month = len(set(h['date'] for h in tracking_history)) # assuming 30 day history passed
+        
+        # Determine Score Caps
+        # Week: 1 day = ~14%, 2 days = ~28%, etc. Cap at strict ratio.
+        weekly_score_cap = int((days_logged_week / 7) * 100)
+        # Month: Cap at ratio of 30 days
+        monthly_score_cap = int((days_logged_month / 30) * 100)
+        
+        user_context = f"""
+        USER PROFILE: {json.dumps(user_profile)}
+        ASSIGNED DIET PROTOCOL: {json.dumps(active_plan.get('plan_data', {}).get('diet_protocol', {}))}
+        
+        PERFORMANCE DATA:
+        - TODAY ({today_str}): {json.dumps(today_data)}
+        - LAST 7 DAYS: {json.dumps(weekly_data)} (DAYS LOGGED: {days_logged_week}/7)
+        - LAST 30 DAYS (ALL LOGS): {json.dumps(tracking_history)} (DAYS LOGGED: {days_logged_month}/30)
+        
+        === MANDATORY SCORING CONSTRAINTS ===
+        Based on the data volume, you MUST adhere to these maximum scores:
+        1. WEEKLY SCORE CAP: {weekly_score_cap}% (User only tracked {days_logged_week} of 7 days)
+           -> You CANNOT score higher than {weekly_score_cap}% for the "weekly" matrix.
+           
+        2. MONTHLY SCORE CAP: {monthly_score_cap}% (User only tracked {days_logged_month} of 30 days)
+           -> You CANNOT score higher than {monthly_score_cap}% for the "monthly" matrix.
+           
+        3. EXPLANATION: If the score is low due to missing data, your analysis bullets MUST say: "Score reflects incomplete data logging (only {days_logged_week} days tracked)."
+        """
+
+        prompt = f"Perform a cross-timeframe analysis (Today vs Week vs Month) against the assigned protocol and generate a Progress Intelligence Report in JSON format:\n{user_context}"
+
+        for attempt in range(max_attempts):
+            try:
+                print(f"[DietAI] Progress Analysis (Attempt {attempt+1}) using {model_to_use}")
+                response = self.client.models.generate_content(
+                    model=model_to_use,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        system_instruction=system_prompt,
+                        response_mime_type="application/json",
+                        temperature=0.4
+                    )
+                )
+                
+                print(f"[DietAI] Progress Analysis Success!")
+                return json.loads(response.text.strip())
+                
+            except Exception as e:
+                print(f"[DietAI] Progress Analysis attempt {attempt+1} failed: {e}")
+                self.api_key = api_rotator.rotate_key()
+                self._initialize_client()
+                
+        return {"error": "Failed to generate AI analysis after multiple attempts"}
+
     def chat_with_assistant(self, message: str, user_profile: Dict[str, Any]) -> str:
         """
         Diety AI Assistant - Using Gemma 3 4B for smart, concise health chat.

@@ -58,12 +58,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             const name = data.profile?.name ? data.profile.name.split(' ')[0] : (data.user_id || 'User');
 
             authItem.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <a href="/profile_setup.html" class="user-badge" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--brand-diet); border: 1px solid var(--border-color, #e4e4e7); padding: 6px 16px; border-radius: 20px; background: rgba(22, 163, 74, 0.05); font-weight: 600;">
+                <div class="auth-container">
+                    <a href="/daily-tracking" class="nav-link-item nav-link-track">
+                        Daily Tracking
+                    </a>
+                    <a href="/profile_setup.html" class="user-badge">
                         <i class="fas fa-user-circle"></i>
                         <span>${name}</span>
                     </a>
-                    <a href="#" onclick="logout(); return false;" class="logout-btn" style="text-decoration: none; color: var(--accent, #dc2626); font-weight: 600; font-size: 0.9rem; padding: 6px 12px; border-radius: 20px; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; background: rgba(220, 38, 38, 0.05);">
+                    <a href="#" onclick="logout(); return false;" class="logout-btn">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
                     </a>
