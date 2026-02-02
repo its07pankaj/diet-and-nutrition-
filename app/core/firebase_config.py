@@ -35,13 +35,21 @@ except ImportError:
 
 # Path to service account key file
 # Path to service account key file
-# Robust check: 1. Env Var, 2. Render Secret Path, 3. Local Dev Path
-possible_paths = [
-    os.getenv('FIREBASE_KEY_PATH'),
-    '/etc/secrets/firebase-admin-key.json',
-    os.path.join(os.path.dirname(__file__), 'firebase-admin-key.json')
-]
-FIREBASE_KEY_PATH = next((p for p in possible_paths if p and os.path.exists(p)), None)
+# Robust check for Render Deployment
+# Render mounts secret files at /etc/secrets/<filename>
+KEY_Filename = 'firebase-admin-key.json'
+RENDER_SECRET_PATH = f'/etc/secrets/{KEY_Filename}'
+LOCAL_PATH = os.path.join(os.path.dirname(__file__), KEY_Filename)
+
+# Priority: 1. Env Var (Explicit Override), 2. Render Secret File, 3. Local File
+if os.getenv('FIREBASE_KEY_PATH'):
+    FIREBASE_KEY_PATH = os.getenv('FIREBASE_KEY_PATH')
+elif os.path.exists(RENDER_SECRET_PATH):
+    FIREBASE_KEY_PATH = RENDER_SECRET_PATH
+elif os.path.exists(LOCAL_PATH):
+    FIREBASE_KEY_PATH = LOCAL_PATH
+else:
+    FIREBASE_KEY_PATH = None
 
 if not FIREBASE_KEY_PATH:
     print("[Firebase] WARNING: Service account key not found in any standard location!")
