@@ -288,13 +288,30 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
 
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        .step-card.exiting {
+            animation: fadeOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            pointer-events: none;
         }
 
         .step-header {
@@ -538,6 +555,75 @@
         input[type="hidden"] {
             display: none;
         }
+
+        /* MOBILE FIXES */
+        @media (max-width: 768px) {
+            .navbar {
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                transform: none !important;
+                border-radius: 0 !important;
+                padding: 0 !important;
+                height: auto !important;
+                min-height: 70px;
+            }
+
+            .navbar .container {
+                padding: 0 20px !important;
+            }
+
+            .wizard-header {
+                margin-top: 20px;
+            }
+
+            /* HIDE SIDEBAR ON MOBILE to prevents ghost clicks on the duplicate logo */
+            .wizard-sidebar {
+                display: none !important;
+            }
+
+            /* Add some top padding to container since sidebar header is gone */
+            .wizard-container {
+                padding-top: 100px !important;
+            }
+
+            /* Fix Navbar Links on Mobile */
+            .nav-links {
+                display: none;
+                /* Hidden by default */
+                flex-direction: column;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                padding: 20px;
+                gap: 15px;
+                border-bottom: 2px solid var(--primary);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+                /* Show when active */
+            }
+
+            .nav-toggle {
+                display: block;
+                /* Show hamburger */
+                cursor: pointer;
+            }
+
+            .nav-toggle span {
+                display: block;
+                width: 25px;
+                height: 3px;
+                background: var(--text-main);
+                margin: 5px 0;
+                transition: 0.3s;
+            }
+        }
     </style>
 </head>
 
@@ -552,22 +638,23 @@
                 <div class="brand-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
                         <defs>
-                            <linearGradient id="logo-gradient-prof-nav" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <linearGradient id="logo-gradient-nav-main" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" style="stop-color:var(--brand-diet)" />
                                 <stop offset="100%" style="stop-color:var(--brand-yellow)" />
                             </linearGradient>
                         </defs>
-                        <path fill="url(#logo-gradient-prof-nav)"
+                        <path fill="url(#logo-gradient-nav-main)"
                             d="M50 15C30 15 15 35 15 55C15 75 35 85 50 85C65 85 85 75 85 55C85 35 70 15 50 15ZM50 78C35 78 25 68 25 55C25 42 35 32 50 25C65 32 75 42 75 55C75 68 65 78 50 78Z" />
                         <path fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"
                             stroke-linejoin="round" d="M25 55H40L45 40L55 70L60 55H75" />
                     </svg>
                 </div>
                 <div class="brand-text">
-                    <span class="text-diet">Diet</span><span class="text-notify">Notify</span>
+                    <span class="text-diet" style="color: var(--brand-diet);">Diet</span><span class="text-notify"
+                        style="color: var(--brand-notify);">Notify</span>
                 </div>
             </a>
-            <div class="nav-toggle" id="navToggle">
+            <div class="nav-toggle" id="navToggle" style="display: none;">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -597,7 +684,7 @@
             <div class="wizard-header">
                 <!-- Text Logo -->
                 <div style="margin-bottom: 24px;">
-                    <a href="/index.html" class="brand-wrapper" style="justify-content: center;">
+                    <div class="brand-wrapper" style="justify-content: center;">
                         <div class="brand-icon" style="height: 50px; width: 50px;">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
                                 <defs>
@@ -615,7 +702,7 @@
                         <div class="brand-text" style="font-size: 2.2rem;">
                             <span class="text-diet">Diet</span><span class="text-notify">Notify</span>
                         </div>
-                    </a>
+                    </div>
                 </div>
                 <h1 class="wizard-title">Build Your <br><span class="gradient-text">Profile</span></h1>
                 <p class="wizard-subtitle">Personalize your journey with biological data</p>
@@ -636,7 +723,7 @@
         </div>
 
         <!-- Form Shell (Desktop Column 2) -->
-        <form id="profileForm">
+        <form id="profileForm" onsubmit="event.preventDefault(); return false;">
 
             <!-- STEP 1: Basic Info -->
             <div class="step-card active" id="step1">
@@ -698,7 +785,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Daily Activity Profile</label>
-                    <div class="selection-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="selection-grid" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));">
                         <div class="selection-card" onclick="selectOption('job_activity', 'Sedentary', this)">
                             <span class="selection-icon"><i class="fas fa-laptop"></i></span>
                             <span class="selection-text">Sedentary</span>
@@ -729,7 +816,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Average Sleep Hours</label>
-                    <div class="selection-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="selection-grid" style="grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));">
                         <div class="selection-card" onclick="selectOption('sleep_hours', '<6', this)">
                             <span class="selection-text">&lt;6 hrs</span>
                         </div>
@@ -748,7 +835,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Hydration Habits (Water Intake)</label>
-                    <div class="selection-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="selection-grid" style="grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));">
                         <div class="selection-card" onclick="selectOption('water_intake', '<4', this)">
                             <span class="selection-icon"><i class="fas fa-tint" style="opacity: 0.3;"></i></span>
                             <span class="selection-text">&lt;4 glasses</span>
@@ -888,7 +975,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Flavor Intensity</label>
-                        <div class="selection-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="selection-grid" style="grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));">
                             <div class="selection-card" onclick="selectOption('spice_level', 'Mild', this)">
                                 <span class="selection-text">Balanced</span>
                             </div>
@@ -904,7 +991,7 @@
 
                     <div class="form-group">
                         <label class="form-label">Meals per Day</label>
-                        <div class="selection-grid" style="grid-template-columns: repeat(4, 1fr);">
+                        <div class="selection-grid" style="grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));">
                             <div class="selection-card" onclick="selectOption('meals_per_day', '2', this)">
                                 <span class="selection-text">2</span>
                             </div>
@@ -938,7 +1025,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Strategic Objective</label>
-                    <div class="selection-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="selection-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
                         <div class="selection-card" onclick="selectOption('goal', 'Fat Loss', this)">
                             <span class="selection-icon"><i class="fas fa-fire" style="color: #ef4444;"></i></span>
                             <span class="selection-text">Weight Optimization</span>
@@ -971,7 +1058,8 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Timeline</label>
-                        <div class="selection-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="selection-grid"
+                            style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));">
                             <div class="selection-card" onclick="selectOption('timeline', '1 month', this)">
                                 <span class="selection-text">1 month</span>
                             </div>
@@ -1167,15 +1255,36 @@
         }
 
         function goToStep(step) {
-            // Hide all steps
-            document.querySelectorAll('.step-card').forEach(card => card.classList.remove('active'));
-            // Show target step
-            document.getElementById(`step${step}`).classList.add('active');
+            const currentActive = document.querySelector('.step-card.active');
+            const target = document.getElementById(`step${step}`);
 
-            if (step === 6) populateSummary();
+            // If we have an active step different from target, animate transition
+            if (currentActive && currentActive.id !== `step${step}`) {
+                currentActive.classList.add('exiting');
 
-            updateProgress();
-            window.scrollTo(0, 0);
+                // Wait for fadeOut (300ms)
+                setTimeout(() => {
+                    currentActive.classList.remove('active', 'exiting');
+                    target.classList.add('active');
+
+                    // Smooth scroll to top
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+
+                    // Setup summary if needed
+                    if (step === 6) populateSummary();
+                    updateProgress();
+                }, 300);
+            } else {
+                // Initial load or direct access
+                if (currentActive) currentActive.classList.remove('active');
+                target.classList.add('active');
+                if (step === 6) populateSummary();
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
         }
 
         function populateSummary() {
