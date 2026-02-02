@@ -57,17 +57,53 @@ class DietyAssistant {
         // DRAG LOGIC
         this.setupDragging();
 
-        // Initial welcome message or History Load
+        // AUTH & HISTORY LOGIC
+        this.userId = null;
+        this.checkUserAndLoadHistory();
+    }
+
+    async checkUserAndLoadHistory() {
+        try {
+            const response = await fetch('/api/auth/status');
+            const data = await response.json();
+
+            if (data.authenticated) {
+                // Use robust ID or fallback to 'user'
+                this.userId = data.user_id || 'user';
+            } else {
+                this.userId = 'guest';
+            }
+        } catch (e) {
+            console.error('[Diety] Auth check failed, defaulting to guest', e);
+            this.userId = 'guest';
+        }
+
         this.loadHistory();
+    }
+
+    getStorageKey() {
+        // Returns a unique key per user, e.g., 'diety_history_user_123'
+        // If guest, 'diety_history_guest'
+        return `diety_history_${this.userId}`;
     }
 
     loadHistory() {
         try {
-            const history = JSON.parse(localStorage.getItem('diety_chat_history') || '[]');
+            // Remove legacy global history if it exists to clean up
+            if (localStorage.getItem('diety_chat_history')) {
+                localStorage.removeItem('diety_chat_history');
+            }
+
+            const key = this.getStorageKey();
+            const history = JSON.parse(localStorage.getItem(key) || '[]');
+
+            this.chatMessages.innerHTML = ''; // Clear existing (default) messages
+
             if (history.length > 0) {
-                console.log(`[Diety] Loaded ${history.length} messages from history`);
+                console.log(`[Diety] Loaded ${history.length} messages for ${this.userId}`);
                 history.forEach(msg => this.addMessage(msg.text, msg.sender, false)); // false = don't save again
             } else {
+                // Different welcome message for guest vs user could go here
                 this.addMessage("Hi! I'm Diety. How can I help you with your health goals today?", 'ai', true);
             }
         } catch (e) {
@@ -78,7 +114,10 @@ class DietyAssistant {
 
     saveHistory(text, sender) {
         try {
-            const history = JSON.parse(localStorage.getItem('diety_chat_history') || '[]');
+            if (!this.userId) return; // Wait for auth check
+
+            const key = this.getStorageKey();
+            const history = JSON.parse(localStorage.getItem(key) || '[]');
             history.push({ text, sender, timestamp: Date.now() });
 
             // Keep last 50 messages
@@ -86,7 +125,7 @@ class DietyAssistant {
                 history.shift();
             }
 
-            localStorage.setItem('diety_chat_history', JSON.stringify(history));
+            localStorage.setItem(key, JSON.stringify(history));
         } catch (e) {
             console.error('[Diety] Error saving history:', e);
         }
